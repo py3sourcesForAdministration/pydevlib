@@ -38,13 +38,27 @@ class cfg:
   """    
   def __init__(self, prginfo=[], prgargs={}, data={} ):
     from __main__ import prgname, prgdir, libdir
+    self.__prgname = prgname
+    self.__prgdir  = prgdir
     self.__prginfo = [prgname, prgdir, libdir]
+    if prgdir not in sys.path:
+      sys.path.insert(0, prgdir)
+      
     #self.prgargs = prgargs
     #self.data = data
       
   @property
   def prginfo(self):
     return self.__prginfo
+  @property
+  def prgname(self):
+    return self.__prgname
+  @property
+  def prgdir(self):
+    return self.__prgdir
+  @property
+  def prgargdefaults(self):
+    return self.__prgargdefaults
   @property
   def prgargs(self):
     return self.prgargs

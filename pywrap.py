@@ -14,7 +14,7 @@ if "--DEBUG+" in sys.argv[1:] or "--DEBUG" in sys.argv[1:]:
   print("DEBUG   : called as",cname,"in dir",calldir,"but is",rname,"in",realdir )
 if cname == rname:
   print("This program is a wrapper and not meant to be called itself !")
-  sys.exit(1)
+  sys.exit(1)    
 libdir = os.environ['PYDEVLIB'] = realdir
 if libdir not in sys.path:
   sys.path.append(0, libdir)
