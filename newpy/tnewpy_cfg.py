@@ -4,4 +4,5 @@ from datetime import date
 from __main__ import prgdir
 data = {
   'test' : 1,
+  'date' : date.today().strftime("%Y-%m-%d")
 }

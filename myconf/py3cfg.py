@@ -38,20 +38,26 @@ class cfg:
   """    
   def __init__(self, prginfo=[], prgargs={}, data={} ):
     from __main__ import prgname, prgdir, libdir, dbg
+    from argparse import Namespace
     self.__prgname = prgname
     self.__prgdir  = prgdir
     self.__prginfo = [prgname, prgdir, libdir]
+    self.__config  = {} 
     if prgdir not in sys.path:
       sys.path.insert(0, prgdir)
     files  = [ os.path.join(prgdir, prgname+'_imp.py'),
                os.path.join(prgdir, prgname+"_cfg.py"), 
                os.path.join(prgdir, prgname+"_usg.py")]
+    confdict = {}            
     try:
       for f in files:
         if f.endswith("imp.py"):
           self.__imports = open(f).read()
-        elif f.endswith("cfg.py"):  
-          self.__config  = open(f).read()
+        elif f.endswith("cfg.py"): 
+
+          exec(open(f).read(),confdict)
+          print (confdict)
+          self.__config = Namespace(**confdict)    
         elif f.endswith("usg.py"): 
           self.__usage   = open(f).read()
     except KeyError as message:

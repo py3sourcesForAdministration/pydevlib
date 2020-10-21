@@ -20,6 +20,7 @@ def main():
   """ Main wrapper part for module calls
   """
   dbg.entersub()
+  #dbg.dprint(cfg.config)
   newpath = os.path.realpath(os.path.join(libdir,'..',prgargs.name))
   dbg.dprint(0,newpath)
   sys.exit(0)
@@ -45,6 +46,6 @@ if __name__ == "__main__":
   from mydebug.py3dbg import dbg
   from myconf.py3cfg import cfg
   exec(cfg.imports)
-  exec(cfg.config)
+  #exec(cfg.config)
   exec(cfg.usage)
   main()
