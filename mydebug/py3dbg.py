@@ -167,6 +167,7 @@ class dbg:
       print("%s %s %s %s %s" % (self.idt  * "  ", ltok1, me, ltok2, last))
     self.__idt -= 1
 
+      
     
 #############################################
 ### Zusatz für dprintr
@@ -287,6 +288,12 @@ class dbg:
         dbg.__dprintroff(start,depth,False)
       else:
           print(f"repr: {repr(ref)}")
+
+#############################################
+  def exitf(self,reason,**kwargs):
+    dbg.dprint(256,"Reason for EXIT:",reason)
+    dbg.leavesub()
+    sys.exit(1)
 
 #############################################
 ### old funtions dprintl is old dprint. dprintref is unchanged      

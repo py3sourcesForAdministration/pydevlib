@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse,sys,os
-from __main__ import prgname,dbg
+from __main__ import prgname,dbg,libdir
 
 class myFormatter(argparse.RawTextHelpFormatter,argparse.ArgumentDefaultsHelpFormatter): 
   pass
-pysrc = os.path.abspath(os.path.join(os.environ['MYPYLIB'],'..'))
+pysrc = os.path.abspath(os.path.join(libdir,'..'))
 
 parser = argparse.ArgumentParser(formatter_class=myFormatter)
 parser.add_argument('-d', type=int,default=0, metavar="debug", dest="debug", 

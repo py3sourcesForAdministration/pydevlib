@@ -37,16 +37,36 @@ class cfg:
       automatically returned via singleton
   """    
   def __init__(self, prginfo=[], prgargs={}, data={} ):
-    from __main__ import prgname, prgdir, libdir
+    from __main__ import prgname, prgdir, libdir, dbg
     self.__prgname = prgname
     self.__prgdir  = prgdir
     self.__prginfo = [prgname, prgdir, libdir]
     if prgdir not in sys.path:
       sys.path.insert(0, prgdir)
-      
-    #self.prgargs = prgargs
-    #self.data = data
-      
+    files  = [ os.path.join(prgdir, prgname+'_imp.py'),
+               os.path.join(prgdir, prgname+"_cfg.py"), 
+               os.path.join(prgdir, prgname+"_usg.py")]
+    try:
+      for f in files:
+        if f.endswith("imp.py"):
+          self.__imports = open(f).read()
+        elif f.endswith("cfg.py"):  
+          self.__config  = open(f).read()
+        elif f.endswith("usg.py"): 
+          self.__usage   = open(f).read()
+    except KeyError as message:
+      dbg.exitf("Keyerror "+message)
+    except IOError as e:
+      #print("Unable to read: {0} {1}".format(f, e.strerror)) 
+      dbg.exitf("Unable to read: "+f+" "+e.strerror) 
+    except sys.exc_info()[0]:
+      if not ( repr(sys.exc_info()[1]) == "SystemExit(0,)" or \
+               repr(sys.exc_info()[1]) == "SystemExit(0)" ):     # py3.9 
+        dbg.exitf("Error exit: "+sys.exc_info()[1]+" in "+f)
+    except: 
+      dbg.exitf("Some unknown error in loading file "+f)
+#      print("Init: Some unknown error in loading file ",f); sys.exit(1)  
+  
   @property
   def prginfo(self):
     return self.__prginfo
@@ -57,8 +77,14 @@ class cfg:
   def prgdir(self):
     return self.__prgdir
   @property
-  def prgargdefaults(self):
-    return self.__prgargdefaults
+  def imports(self):
+    return self.__imports    
+  @property
+  def config(self):
+    return self.__config
+  @property
+  def usage(self):
+    return self.__usage
   @property
   def prgargs(self):
     return self.prgargs
