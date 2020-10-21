@@ -4,7 +4,7 @@
     selects an available version > 3.6 to run.
     preference according to the order in 
       myfile.search.get_latest_python3
-    Also sets the environment variable MYPYLIB  
+    Also sets the environment variable MYPYLIB / PYDEVLIB 
 """
 import os, os.path, sys
 #(realdir,rname) = os.path.split(pathlib.Path(__file__).resolve())
@@ -15,14 +15,14 @@ if "--DEBUG+" in sys.argv[1:] or "--DEBUG" in sys.argv[1:]:
 if cname == rname:
   print("This program is a wrapper and not meant to be called itself !")
   sys.exit(1)
-libdir = os.environ['MYPYLIB'] = realdir
+libdir = os.environ['PYDEVLIB'] = realdir
 if libdir not in sys.path:
   sys.path.append(0, libdir)
 
 (prgname,ext) = os.path.splitext(cname)
 import myfile.search
 py = myfile.search.get_latest_python3(sys.argv)
-from DBG.py3dbg import dbg  
+from mydebug.py3dbg import dbg  
 ##############################################################################
 def main():
 ##### Work on sys.argv 
