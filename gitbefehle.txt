@@ -1,0 +1,64 @@
+#--- ein Directory auf dem Server erstellen für gruppenzugriff ohne worktree
+#--- hier in /home/all/gitsrv auf centosap 
+git init --bare --shared=group  pysrc.git
+#--- für die Subprojecte wiederholen -- hier Versuch innerhalb des bereits bestehenden
+cd pysrc.git
+git init --bare --shared=group  rxe.git
+.....
+
+############################## Befüllen des Servers
+#--- ein leeres directory erstellen mit dem Superproject
+mkdir /home/all/gitsrv/gitinput/pysrc
+cd !$
+git init
+#--- die initialen Datein in dieses Directory kopieren
+git add */*
+git status
+git commit  -m 'initial new'
+#--- directory inhalt zum Server pushen
+git push ssh://centosap.psw.local/home/all/gitsrv/pysrc.git '*:*'
+
+#--- auf dem Server für jedes subproject Befüllen wiederholen
+mkdir /home/all/gitsrv/gitinput/rxe
+.....
+git push ssh://centosap.psw.local/home/all/gitsrv/pysrc.git/rxe.git '*:*'
+...
+
+#--- jetzt das server repository auf einem Client auschecken
+#--- in das gewünscghte home verzeichnis auf dem client wechseln
+git clone --recurse-submodules -j 2 ap@centosap:/home/all/gitsrv/pysrc.git
+#---
+#--- für alle subprojekte
+git submodule add ssh://centosap.psw.local/home/all/gitsrv/pysrc.git/rxe.git
+die submodule aber in .gitignore ausschliessen und .gitmodules ausschließen
+
+
+
+
+
+für jedes Subrepository
+
+cd pysrc.git
+git submodule add --init --bare --shared=group ./Dsearch.git 
+
+
+####################################################################
+Befüllen eines remote repositories mit einem lokalen Verzeichnis
+1. Erzeugen des remote repos als leeres repo auf dem Server
+  mkdir /home/all/gitsrv/py3dev/
+  cd /home/all/gitsrv/py3dev/
+  git init --bare --shared=group mypylib.git
+
+2. Auf der lokalen Maschine das Verzeichnis zum Repo machen
+  git init
+  git add *
+  git status
+  git commit
+
+3. Das leere Server als origin setzen und pushen
+  git remote add origin ssh://centosap/home/all/gitsrv/py3dev/mypylib.git
+  git push ssh://centosap.psw.local/home/all/gitsrv/py3dev/testpy.git '*:*'
+
+4. Das befüllte Server repo zum master branch machen
+  git push --set-upstream origin master
+  
