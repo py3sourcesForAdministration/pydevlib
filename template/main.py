@@ -11,6 +11,8 @@ def main():
   """ Main part for doing the work
   """
   dbg.entersub()
+  dbg.dprint(0,"Example to show usage of dbg and cfg:\n",
+               " cfg.data:",cfg.data,"cfg.keys():",list(cfg.keys()))
   dbg.leavesub()
 
 ###########   D E F A U L T   I N I T   #######################################

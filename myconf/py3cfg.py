@@ -35,7 +35,8 @@ def init_cfg(prgname,prgdir,libdir,dbg):
       ### read config, evaluate and extract vars  
       elif f.endswith("cfg.py"):
         exec(open(f).read(),confdict)
-        cfg.data = aDict(confdict['data'])
+        cfg.data        = aDict(confdict.get('data',{}))
+        cfg.argdefaults = aDict(confdict.get('argdefaults',{}))
       ### read usagefile     
       elif f.endswith("usg.py"): 
         cfg.usage   = open(f).read()

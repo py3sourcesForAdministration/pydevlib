@@ -11,3 +11,4 @@ import datetime
 import dateutil.parser, dateutil.relativedelta
 import argparse
 #### Import your classes and modules
+from addict import Dict as aDict

@@ -39,7 +39,11 @@ def get_names(file):
 
 
 if __name__ == "__main__": 
+  import platform
   libdir = chk_sufficient()
+  print("ok - Python Version:", platform.python_version())  
+  print("ok - libdir        :", libdir)  
   (prgname,prgdir) = get_names(__file__)
-  pprint.pprint(sys.path) 
-  print('prgname:',prgname,'pgrdir:',prgdir)
+  print("ok - prgdir        :", prgdir)  
+  if prgname:
+    print("-------- ok --------\n")
