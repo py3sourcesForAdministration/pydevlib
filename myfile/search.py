@@ -26,12 +26,12 @@ def filepath_search_names(top, stype, search, ignore = re.compile('^$') ):
     pass
 
 ### ----------------------------------------------------
-def get_latest_python3(args):
+def get_latest_python3(args,pythons):
   """ function to switch to the highest available python version
       if needed, but always return the path to found python
   """
-  pythons = [ '/usr/bin/python3.5','/usr/bin/python3.6',
-            '/usr/bin/python3.8','/usr/bin/python3.9' ]
+  #pythons = [ '/usr/bin/python3.5','/usr/bin/python3.6',
+  #          '/usr/bin/python3.8','/usr/bin/python3.9' ]
   py      = list(filter( os.path.isfile, pythons ))
   if py:
     py = py.pop()
@@ -53,7 +53,7 @@ def get_latest_python3(args):
 ### ----------------------------------------------------
 def default_main_init(prgdir,prgname):
   """ function to do the initialization if program is called
-      as main
+      as main ! NOT USED ! see myconf.py3cfg.init_cfg
   """     
   try:
     libdir = os.environ['MYPYLIB']

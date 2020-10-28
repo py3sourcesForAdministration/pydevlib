@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """ helper programm to search and start python programs. 
     selects an available version > 3.6 to run.
-    preference according to the order in 
-      myfile.search.get_latest_python3
+    preference according to the order in pywrap_cfg.py
+    (last in list is first to be checked)
     Also sets the environment variable MYPYLIB / PYDEVLIB 
 """
 import os, os.path, sys
@@ -11,18 +11,25 @@ import os, os.path, sys
 (realdir,rname) = os.path.split(os.path.realpath(__file__))
 (calldir,cname) = os.path.split(os.path.abspath(__file__))
 if "--DEBUG+" in sys.argv[1:] or "--DEBUG" in sys.argv[1:]:
-  print("DEBUG   : called as",cname,"in dir",calldir,"but is",rname,"in",realdir )
+  print("DEBUG   : called as",cname,"in dir",calldir,
+        "but is",rname,"in",realdir )
 if cname == rname:
   print("This program is a wrapper and not meant to be called itself !")
-  sys.exit(1)    
+  if sys.argv[0].find('pydoc'):
+    print(__doc__)
+  sys.exit(1)   
 libdir = os.environ['PYDEVLIB'] = realdir
 if libdir not in sys.path:
   sys.path.append(0, libdir)
 
+(rshort,ext)  = os.path.splitext(rname)   
 (prgname,ext) = os.path.splitext(cname)
+from mydebug.py3dbg import dbg
+from myconf.py3cfg  import init_cfg
+cfg = init_cfg(rshort,realdir,libdir,dbg)
 import myfile.search
-py = myfile.search.get_latest_python3(sys.argv)
-from mydebug.py3dbg import dbg  
+py = myfile.search.get_latest_python3(sys.argv,cfg.data.pythons)
+
 ##############################################################################
 def main():
 ##### Work on sys.argv 
@@ -33,7 +40,8 @@ def main():
       dbg.setlvl(+3) 
   globals()['prgargs'] = [ value for value in sys.argv[1:] if not value.startswith('--DEBUG')]
 ##### Check things
-  dbg.dprint(2,"Wanted is",prgname, "called from", __file__ , "with args", prgargs )
+  dbg.dprint(2,"Wanted is",prgname, "called from", __file__ , 
+               "with args", prgargs )
 ##### Now search for program in srcdir wait for execution and exit
   # dbg.dprint(1, "Python Version:",sys.version)
   for top, dirs, files in os.walk(os.path.dirname(libdir)):
