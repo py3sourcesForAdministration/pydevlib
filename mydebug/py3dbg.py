@@ -290,8 +290,10 @@ class dbg:
           print(f"repr: {repr(ref)}")
 
 #############################################
-  def exitf(self,reason,**kwargs):
-    dbg.dprint(256,"Reason for EXIT:",reason)
+  def exitf(self,*reason,**kwargs):
+    dbg.dprint(256,"Reason for EXIT:")
+    for msg in reason:
+      dbg.dprint(256,msg)
     dbg.leavesub()
     sys.exit(1)
 

@@ -24,11 +24,7 @@ if libdir not in sys.path:
 
 (rshort,ext)  = os.path.splitext(rname)   
 (prgname,ext) = os.path.splitext(cname)
-from mydebug.py3dbg import dbg
-from myconf.py3cfg  import init_cfg
-cfg = init_cfg(rshort,realdir,libdir,dbg)
-import myfile.search
-py = myfile.search.get_latest_python3(sys.argv,cfg.data.pythons)
+
 
 ##############################################################################
 def main():
@@ -67,5 +63,10 @@ def main():
 ##############################################################################
 ### ----------------------------------------------------
 if __name__ == "__main__":
+  from mydebug.py3dbg import dbg
+  from myconf.py3cfg  import init_cfg
+  cfg = init_cfg(rshort,realdir,libdir,dbg)
+  import myfile.search
+  py = myfile.search.get_latest_python3(sys.argv,cfg.data.pythons)
   main()
 

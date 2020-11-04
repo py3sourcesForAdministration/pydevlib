@@ -43,15 +43,15 @@ def init_cfg(prgname,prgdir,libdir,dbg):
     del confdict
   ### These are the usual errors       
   except KeyError as message:
-      dbg.exitf("Keyerror "+message)
+      dbg.exitf("Keyerror ",message)
   except IOError as e:
       #print("Unable to read: {0} {1}".format(f, e.strerror)) 
-      dbg.exitf("Unable to read: "+f+" "+e.strerror) 
+      dbg.exitf("Unable to read:",f,e.strerror) 
   except sys.exc_info()[0]:
     if not ( repr(sys.exc_info()[1]) == "SystemExit(0,)" or \
              repr(sys.exc_info()[1]) == "SystemExit(0)" ):     # py3.9 
-      dbg.exitf("Error exit: "+sys.exc_info()[1]+" in "+f)
+      dbg.exitf("sys.exc Error:",sys.exc_info()[1],"in",f)
   except: 
-      dbg.exitf("Some unknown error in loading file "+f)
+      dbg.exitf("Some unknown error in loading file ",f)
 #      print("Init: Some unknown error in loading file ",f); sys.exit(1)
   return(cfg) 
