@@ -62,3 +62,9 @@ Befüllen eines remote repositories mit einem lokalen Verzeichnis
 4. Das befüllte Server repo zum master branch machen
   git push --set-upstream origin master
   
+
+
+#######################################################################################
+# Die remote repositories anzeigen
+git remote -v
+
