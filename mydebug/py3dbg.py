@@ -314,7 +314,7 @@ class dbg:
     print("%s  DBG %s%03d%s START: %s" % (tab*self.idt ,
             self.col, lvl ,Style.RESET_ALL, pname))
     pprint.pprint(ref)
-    print("%s  DBG %s%02d%s   END: %s" % (self.idt * "  " ,
+    print("%s  DBG %s%03d%s   END: %s" % (self.idt * "  " ,
             self.col, lvl ,Style.RESET_ALL, pname))
 
 
