@@ -13,6 +13,8 @@ cd !$
 git init
 #--- die initialen Datein in dieses Directory kopieren
 git add */*
+#--- besser, da nur die Dateien aufgenommen werden, die nicht durch .gitignore ausgeschlossen werden 
+git add .
 git status
 git commit  -m 'initial new'
 #--- directory inhalt zum Server pushen
