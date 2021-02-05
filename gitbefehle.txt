@@ -53,7 +53,7 @@ Befüllen eines remote repositories mit einem lokalen Verzeichnis
 
 2. Auf der lokalen Maschine das Verzeichnis zum Repo machen
   git init
-  git add *
+  git add .
   git status
   git commit
 
@@ -70,3 +70,7 @@ Befüllen eines remote repositories mit einem lokalen Verzeichnis
 # Die remote repositories anzeigen
 git remote -v
 
+#######################################################################################
+# Zum Kopieren zu ITergo
+cd pydev/patchwait
+tar cvzf  /tmp/.x2go-ap@psw.local/media/disk/_cygdrive_C_Users_A285687_Home/2021-02-05_patchwait.tgz -X .gitignore .
