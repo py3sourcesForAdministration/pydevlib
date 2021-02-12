@@ -28,17 +28,17 @@ if libdir not in sys.path:
 
 ##############################################################################
 def main():
-##### Work on sys.argv 
+  ##### Work on sys.argv 
   if len(sys.argv) > 1:
     if "--DEBUG+" in sys.argv[1:] :
       dbg.setlvl(+7) 
     elif "--DEBUG" in sys.argv[1:] :
       dbg.setlvl(+3) 
   globals()['prgargs'] = [ value for value in sys.argv[1:] if not value.startswith('--DEBUG')]
-##### Check things
+  ##### Check things
   dbg.dprint(2,"Wanted is",prgname, "called from", __file__ , 
                "with args", prgargs )
-##### Now search for program in srcdir wait for execution and exit
+  ##### Now search for program in srcdir wait for execution and exit
   # dbg.dprint(1, "Python Version:",sys.version)
   srcdir = os.path.dirname(libdir)
   if 'PYDEV' in os.environ:
@@ -50,7 +50,7 @@ def main():
       if nm.startswith(prgname) and '_' not in nm and nm.endswith('.py') :
         fullname = os.path.join(top, nm)
         dbg.dprint(2,"found", fullname )
-##### Execute the first found python prog and 
+        ##### Execute the first found python prog and 
         from subprocess import Popen
         dbg.setlvl()
         if "--DEBUG" in sys.argv[1:] or "--DEBUG+" in sys.argv[1:]:
@@ -60,7 +60,7 @@ def main():
         #dbg.leavesub()
         return
         
-##### Nothing found      
+  ##### Nothing found      
   print(prgname, "could not be found")
   
 ##############################################################################
