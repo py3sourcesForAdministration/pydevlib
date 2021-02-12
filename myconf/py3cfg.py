@@ -12,6 +12,7 @@
 import sys, os , os.path
 from addict import Dict as aDict
 
+##############################################################################
 def init_cfg(prgname,prgdir,libdir,dbg):
   """  This procedure returns a dictionary containing the important parts of
   configuration

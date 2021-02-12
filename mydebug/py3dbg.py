@@ -308,26 +308,23 @@ class dbg:
   #############################################
   ### old funtions dprintl is old dprint. dprintref is unchanged      
   #############################################
-  #############################################
-  @__printout
-  def dprintl(self,lvl,*args):
-    """ Method for debug print as list at some level """
-    myargs = ' '.join(map(str, args))
-    start = tbs*(self.idt+1)
-    print(f"{start}DBG {self.col}{lvl:03d}{reset} : {myargs}")
-
-  #############################################
-  @__printout
-  def dprintref(self,lvl,ref,pname):   
-    """ Method for debug prints of objects """
-    print("%s  DBG %s%03d%s START: %s" % (tab*self.idt ,
-            self.col, lvl ,Style.RESET_ALL, pname))
-    pprint.pprint(ref)
-    print("%s  DBG %s%03d%s   END: %s" % (self.idt * "  " ,
-            self.col, lvl ,Style.RESET_ALL, pname))
-
-
-    
+    #############################################
+    #@__printout
+    #def dprintl(self,lvl,*args):
+    #  """ Method for debug print as list at some level """
+    #  myargs = ' '.join(map(str, args))
+    #  start = tbs*(self.idt+1)
+    #  print(f"{start}DBG {self.col}{lvl:03d}{reset} : {myargs}")
+  
+    #############################################
+    #@__printout
+    #def dprintref(self,lvl,ref,pname):   
+    #  """ Method for debug prints of objects """
+    #  print("%s  DBG %s%03d%s START: %s" % (tab*self.idt ,
+    #          self.col, lvl ,Style.RESET_ALL, pname))
+    #  pprint.pprint(ref)
+    #  print("%s  DBG %s%03d%s   END: %s" % (self.idt * "  " ,
+    #          self.col, lvl ,Style.RESET_ALL, pname))
     
 ###################################################################################
 ###            Muell
