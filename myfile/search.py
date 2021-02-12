@@ -30,8 +30,6 @@ def get_latest_python3(args,pythons):
   """ function to switch to the highest available python version
       if needed, but always return the path to found python
   """
-  pythons = [ '/usr/bin/python3.5','/usr/bin/python3.6',
-            '/usr/bin/python3.8','/usr/bin/python3.9' ]
   py      = list(filter( os.path.isfile, pythons ))
   if py:
     py = py.pop()
