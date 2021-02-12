@@ -6,6 +6,8 @@ from __main__ import prgname,dbg,libdir
 class myFormatter(argparse.RawTextHelpFormatter,argparse.ArgumentDefaultsHelpFormatter): 
   pass
 pysrc = os.path.abspath(os.path.join(libdir,'..'))
+if 'PYDEV' in os.environ:
+  pysrc = os.environ['PYDEV']
 
 parser = argparse.ArgumentParser(formatter_class=myFormatter)
 parser.add_argument('-d', type=int,default=0, metavar="debug", dest="debug", 

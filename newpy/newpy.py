@@ -4,17 +4,6 @@
     Creates the needed usage, import and config files and also   
 """
 import os, os.path, sys,checkenv
-###### check for minimum python version and PYDEVLIB
-#if sys.version_info < (3,6):
-#  print("python should be at least version 3.6") ; sys.exit(1)  
-#if 'PYDEVLIB' not in os.environ:
-#  print("you need to set os.environ['PYDEVLIB']") ; sys.exit(1)
-#else:
-#  libdir = os.environ['PYDEVLIB']
-#  if libdir not in sys.path: sys.path.insert(0, libdir ) 
-##### Set global vars needed for init
-#(prgdir,fname) = os.path.split(os.path.realpath(__file__))
-#(prgname,ext) = os.path.splitext(fname)
 libdir         = checkenv.chk_sufficient()
 prgname,prgdir = checkenv.get_names(__file__)
 ###########   M A I N   ######################################################
@@ -23,9 +12,12 @@ def main():
   """
   dbg.entersub()
   #dbg.dprint(cfg.config)
+  topdir = os.path.realpath(os.path.join(libdir,'..'))
+  if 'PYDEV' in os.environ:
+    topdir = os.environ['PYDEV']
   if '/' in prgargs.name:
     requestname = os.path.basename(prgargs.name) 
-  newpath = os.path.realpath(os.path.join(libdir,'..',prgargs.name))
+  newpath = os.path.realpath(os.path.join(topdir,prgargs.name))
   templdir = os.path.join(libdir,'template')
   dbg.dprint(2,"New Dir:", newpath,"from templates in",templdir)
   #sys.exit(0)

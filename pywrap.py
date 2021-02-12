@@ -40,7 +40,10 @@ def main():
                "with args", prgargs )
 ##### Now search for program in srcdir wait for execution and exit
   # dbg.dprint(1, "Python Version:",sys.version)
-  for top, dirs, files in os.walk(os.path.dirname(libdir)):
+  srcdir = os.path.dirname(libdir)
+  if 'PYDEV' in os.environ:
+    srcdir = os.environ['PYDEV']
+  for top, dirs, files in os.walk(srcdir):
     for nm in files:
       path = os.path.join(top, nm)
       dbg.dprint(4,path)
