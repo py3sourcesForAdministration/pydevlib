@@ -40,25 +40,28 @@ def main():
                "with args", prgargs )
   ##### Now search for program in srcdir wait for execution and exit
   # dbg.dprint(1, "Python Version:",sys.version)
+  topdirs = [libdir,]
   srcdir = os.path.dirname(libdir)
   if 'PYDEV' in os.environ:
     srcdir = os.environ['PYDEV']
-  for top, dirs, files in os.walk(srcdir):
-    for nm in files:
-      path = os.path.join(top, nm)
-      dbg.dprint(4,path)
-      if nm.startswith(prgname) and '_' not in nm and nm.endswith('.py') :
-        fullname = os.path.join(top, nm)
-        dbg.dprint(2,"found", fullname )
-        ##### Execute the first found python prog and 
-        from subprocess import Popen
-        dbg.setlvl()
-        if "--DEBUG" in sys.argv[1:] or "--DEBUG+" in sys.argv[1:]:
-          dbg.dprint(0,  py,fullname, ' '.join(prgargs[0:]),"\n")   
-        p = Popen([py] + [fullname] + prgargs[0:])
-        p.wait()
-        #dbg.leavesub()
-        return
+  topdirs.append(srcdir)   
+  for topdir in topdirs:  
+    for top, dirs, files in os.walk(topdir):
+      for nm in files:
+        path = os.path.join(top, nm)
+        dbg.dprint(4,path)
+        if nm.startswith(prgname) and '_' not in nm and nm.endswith('.py') :
+          fullname = os.path.join(top, nm)
+          dbg.dprint(2,"found", fullname )
+          ##### Execute the first found python prog and 
+          from subprocess import Popen
+          dbg.setlvl()
+          if "--DEBUG" in sys.argv[1:] or "--DEBUG+" in sys.argv[1:]:
+            dbg.dprint(0,  py,fullname, ' '.join(prgargs[0:]),"\n")   
+          p = Popen([py] + [fullname] + prgargs[0:])
+          p.wait()
+          #dbg.leavesub()
+          return
         
   ##### Nothing found      
   print(prgname, "could not be found")
