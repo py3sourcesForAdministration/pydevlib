@@ -15,8 +15,8 @@ def main():
   topdir = os.path.realpath(os.path.join(libdir,'..'))
   if 'PYDEV' in os.environ:
     topdir = os.environ['PYDEV']
-  if '/' in prgargs.name:
-    requestname = os.path.basename(prgargs.name) 
+  requestname = os.path.basename(prgargs.name) 
+
   newpath = os.path.realpath(os.path.join(topdir,prgargs.name))
   templdir = os.path.join(libdir,'template')
   dbg.dprint(2,"New Dir:", newpath,"from templates in",templdir)
