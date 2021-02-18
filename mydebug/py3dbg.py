@@ -267,10 +267,21 @@ class dbg:
     else:
       ### handle dicts 
       if isinstance(ref,dict): 
-        print(f"{dicton}")   
-        for k,v in sorted(ref.items()):
-          print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
-          dbg.__dprintr(lvl,v,depth=depth+1)
+        print(f"{dicton}") 
+        try :
+          for k,v in sorted(ref.items()):
+            if hasattr(k,'__len__'):
+              print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
+            else:
+              print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
+            dbg.__dprintr(lvl,v,depth=depth+1)
+        except TypeError:    
+          for k,v in (ref.items()):
+            if hasattr(k,'__len__'):
+              print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
+            else:
+              print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
+            dbg.__dprintr(lvl,v,depth=depth+1)
         dbg.__dprintroff(start,depth,dictoff)
       ### handle lists 
       elif isinstance(ref,list):
@@ -294,7 +305,8 @@ class dbg:
         print(f"{ref}",end='')
         dbg.__dprintroff(start,depth,False)
       else:
-          print(f"repr: {repr(ref)}")
+        print(f"repr: {repr(ref)}",end='')
+        dbg.__dprintroff(start,depth,False)
 
   #############################################
   def exitf(self,*reason,**kwargs):
