@@ -27,6 +27,36 @@ liston   = '['
 listoff  = ']'
 tupleon  = '('
 tupleoff = ')' 
+###------------------------------------------ 
+def sort_dict_if_possible(fun,*args):
+  return fun(*args)
+
+###------------------------------------------ 
+def byitems(obj):
+  try:
+    sorted(obj.items())
+    return sorted(obj.items())  
+  except Exception as e :
+    #print("EXCEPTION:",e)
+    return obj.items()
+
+###------------------------------------------ 
+def bykey(obj):
+  try:
+    sorted(obj)
+    return sorted(obj)  
+  except Exception as e :
+    #print("EXCEPTION:",e)
+    return obj
+
+###------------------------------------------ 
+def byvalue(obj):
+  try:
+    sorted(obj,key=obj.get )
+    return sorted(obj,key=obj.get )  
+  except Exception as e :
+    #print("EXCEPTION:",e)
+    return obj 
 
 def singleton(cls):
   return cls()
@@ -178,7 +208,8 @@ class dbg:
                 sys._getframe(2).f_code.co_name
       print("%s %s %s %s %s" % (self.idt  * "  ", ltok1, me, ltok2, last))
     self.__idt -= 1
-    
+
+  #############################################
   #############################################
   def __dprintroff(self,start,depth,token): 
     """ addon of dprintr. Decides to place a ',' at end of recursion """
@@ -268,20 +299,12 @@ class dbg:
       ### handle dicts 
       if isinstance(ref,dict): 
         print(f"{dicton}") 
-        try :
-          for k,v in sorted(ref.items()):
-            if hasattr(k,'__len__'):
-              print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
-            else:
-              print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
-            dbg.__dprintr(lvl,v,depth=depth+1)
-        except TypeError:    
-          for k,v in (ref.items()):
-            if hasattr(k,'__len__'):
-              print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
-            else:
-              print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
-            dbg.__dprintr(lvl,v,depth=depth+1)
+        for k,v in sort_dict_if_possible(byitems,ref):
+          if hasattr(k,'__len__'):
+            print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
+          else:
+            print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
+          dbg.__dprintr(lvl,v,depth=depth+1)
         dbg.__dprintroff(start,depth,dictoff)
       ### handle lists 
       elif isinstance(ref,list):
