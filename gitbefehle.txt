@@ -74,3 +74,25 @@ git remote -v
 # Zum Kopieren zu ITergo
 cd pydev/patchwait
 tar cvzf  /tmp/.x2go-ap@psw.local/media/disk/_cygdrive_C_Users_A285687_Home/2021-02-05_patchwait.tgz -X .gitignore .
+
+#######################################################################################
+Man kann auch ein normales (non bare) Verzeichnis auf Rechner A als remote für Rechner B setzen. 
+Beispiel: Rechner A centosap:/home/ap/pydev/testpy/ mit lokalem .git, aber ohne remote
+          Rechner B ul30:/home/ap/pydev/testpy, git remote ssh://centosap/home/ap/pydev/testpy/.git
+Nachteil:
+Von diesem Verzeichnis kann man zwar Clone, Fetch, Pull machen (B fragt A ),kann aber nur mit Schwierigkeiten einen
+Push (B -> A) ausführen. Das Verzeichnis ist ja auf Rechner A ebenfalls ausgecheckt, weigert sich daher in 
+diesem Zustand eine Änderung entgegenzunehmen.
+Abhilfe:  
+Rechner A: im Verzeichnis auf A ausführen (nur beim ersten Mal)
+  git config receive.denycurrentbranch [ignore|warn]
+Rechner B: der die Änderungen hat,
+  git push oder in VSCode sync
+Rechner A: git reset --hard     # Das überschreibt den Inhalt von .git
+           git checkout         # Das bringt das Working Directory auf den Stand von .git
+
+Besser ein bare Repository, in dem beide schreiben können.
+Tip für VScode: gitautofetch einrichten, dann werden die Änderungen, die andere im remote gemacht haben 
+auch unter source Control angezeigt. Leider nur mit dem Sync Zeichen, also vor dem Arbeiten erstmal nachsehen,
+ob man auf dem aktuellen Stand des Repos ist.   
+
