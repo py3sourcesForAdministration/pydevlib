@@ -11,48 +11,62 @@
 
 import sys, os , os.path
 from addict import Dict as aDict
-
-##############################################################################
+#print("in py3cfg")
+#############################################################################
+def try_import_rx(filename,parentdict,*items,tp='ro'):
+  from __main__ import dbg
+  importdict = type(parentdict)()
+  foundlist  = []
+  if not len(items):
+    return "itemlist must not be empty"
+  try:
+    readobj = open(filename).read()
+    if tp == 'rx':
+      exec( readobj, importdict )
+  except Exception as e:
+    del importdict    
+    return(e)
+  
+  for it in items:
+    if tp == 'ro':
+      parentdict[it] = readobj      
+    else:
+      if it in importdict:
+        ### Check and print if overwriting
+        if it in parentdict:
+          dbg.dprint(256,type(parentdict),'[',it,']',parentdict[it])
+        ###  
+        foundlist.append(it)
+        if isinstance(importdict[it],dict) :
+          parentdict[it] = type(parentdict)(importdict.get(it))
+        else:
+          parentdict[it] = importdict.get(it) 
+  del importdict    
+  return foundlist
+ 
+#############################################################################
 def init_cfg(prgname,prgdir,libdir,dbg):
   """  This procedure returns a dictionary containing the important parts of
   configuration
   """
+  #dbg.dprint(256, "in init_cfg")
   cfg = aDict() 
   cfg.prgname = prgname
   cfg.prgdir  = prgdir
-  #cfg.libdir  = libdir
   if prgdir not in sys.path:
     sys.path.insert(0, prgdir)
   files  = [ os.path.join(prgdir, prgname+'_imp.py'),
              os.path.join(prgdir, prgname+"_cfg.py"), 
              os.path.join(prgdir, prgname+"_usg.py")]
-  try:
-    for f in files:
-      confdict = {}
-      ### read importfile
-      if f.endswith("imp.py"):
-        cfg.imports = open(f).read()
-        exec(cfg.imports,confdict)  
-      ### read config, evaluate and extract vars  
-      elif f.endswith("cfg.py"):
-        exec(open(f).read(),confdict)
-        cfg.data        = aDict(confdict.get('data',{}))
-        cfg.argdefaults = aDict(confdict.get('argdefaults',{}))
-      ### read usagefile     
-      elif f.endswith("usg.py"): 
-        cfg.usage   = open(f).read()
-    del confdict
-  ### These are the usual errors       
-  except KeyError as message:
-    dbg.exitf("Keyerror ",message)
-  except IOError as e:
-    #print("Unable to read: {0} {1}".format(f, e.strerror)) 
-    dbg.exitf("Unable to read:",f,e.strerror) 
-  except sys.exc_info()[0]:
-    if not ( repr(sys.exc_info()[1]) == "SystemExit(0,)" or \
-             repr(sys.exc_info()[1]) == "SystemExit(0)" ):     # py3.9 
-      dbg.exitf("sys.exc Error:",sys.exc_info()[1],"in",f)
-  except: 
-    dbg.exitf("Some unknown error in loading file ",f)
-    #print("Init: Some unknown error in loading file ",f); sys.exit(1)
+  for f in files:
+    res = None
+    if f.endswith("imp.py"):
+      res = try_import_rx(f,cfg,'imports')
+    elif f.endswith("cfg.py"):
+      res = try_import_rx(f,cfg,'data','argdefaults',tp='rx')
+    elif f.endswith("usg.py"):
+      res = try_import_rx(f,cfg,'usage')
+    
+    if not isinstance(res,list):
+      dbg.exitf(res,"in",f)
   return(cfg) 
