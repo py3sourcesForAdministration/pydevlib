@@ -51,7 +51,8 @@ def main():
       for nm in files:
         path = os.path.join(top, nm)
         dbg.dprint(4,path)
-        if nm.startswith(prgname) and '_' not in nm and nm.endswith('.py') :
+        #if nm.startswith(prgname) and '_' not in nm and nm.endswith('.py') :
+        if nm == prgname+'.py' :
           fullname = os.path.join(top, nm)
           dbg.dprint(2,"found", fullname )
           ##### Execute the first found python prog and 
