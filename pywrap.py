@@ -7,6 +7,7 @@
     Also sets the environment variable MYPYLIB / PYDEVLIB 
 """
 import os, os.path, sys
+from addict import Dict as aDict
 #(realdir,rname) = os.path.split(pathlib.Path(__file__).resolve())
 (realdir,rname) = os.path.split(os.path.realpath(__file__))
 (calldir,cname) = os.path.split(os.path.abspath(__file__))
@@ -72,7 +73,8 @@ if __name__ == "__main__":
   from mydebug.py3dbg import dbg
   from myconf.py3cfg  import init_cfg
   cfg = init_cfg(rshort,realdir,libdir,dbg)
+  #dbg.dprint(0,type(cfg), cfg.data.pythons)
   import myfile.search
-  py = myfile.search.get_latest_python3(sys.argv,cfg.data.pythons)
+  py = myfile.search.get_latest_python3(sys.argv,cfg['data']['pythons'])
   main()
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """ Helper Functions to search files """
 import os,sys,re
+#print("in search")
 ### ----------------------------------------------------
 def filepath_search_names(top, stype, search, ignore = re.compile('^$') ):
   """ Search for files,dir or symlinks in file system. Takes two
@@ -30,6 +31,8 @@ def get_latest_python3(args,pythons):
   """ function to switch to the highest available python version
       if needed, but always return the path to found python
   """
+  #from __main__ import dbg,cfg
+  #print("in get_latest_python3",__name__)
   py      = list(filter( os.path.isfile, pythons ))
   if py:
     py = py.pop()
