@@ -63,7 +63,7 @@ def init_cfg(prgname,prgdir,libdir,dbg):
     if f.endswith("imp.py"):
       res = try_import_rx(f,cfg,'imports')
     elif f.endswith("cfg.py"):
-      res = try_import_rx(f,cfg,'data','argdefaults',tp='rx')
+      res = try_import_rx(f,cfg,'data','argdefaults','guidefs',tp='rx')
     elif f.endswith("usg.py"):
       res = try_import_rx(f,cfg,'usage')
     
