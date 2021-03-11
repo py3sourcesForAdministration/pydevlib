@@ -52,19 +52,19 @@ def load_all_themes(root):
       root.tk.call('package', 'require','colorutils')
       root.tk.call('package', 'require','awthemes')       
       root.tk.call("package", "require", 'awdark') 
-      root.tk.call("package", "require", 'awlight')
-      root.tk.call("package", "require", 'awarc')
-      root.tk.call("package", "require", 'awbreeze')
-      root.tk.call("package", "require", 'awclearlooks')
-      root.tk.call("package", "require", 'awwinxpblue')
+      #root.tk.call("package", "require", 'awlight')
+      #root.tk.call("package", "require", 'awarc')
+      #root.tk.call("package", "require", 'awbreeze')
+      #root.tk.call("package", "require", 'awclearlooks')
+      #root.tk.call("package", "require", 'awwinxpblue')
     except Exception as e:
       dbg.dprint(0,"Could not load awthemes:",e)  
-    try:
-      #print( themepaths['scid'])
-      scidthemes = os.path.join(themepaths['scid'],'scidthemes.tcl')
-      root.tk.call('source', scidthemes )
-    except Exception as e:
-      dbg.dprint(0,"Could not load scidthemes:",e)  
+    #try:
+    #  #print( themepaths['scid'])
+    #  scidthemes = os.path.join(themepaths['scid'],'scidthemes.tcl')
+    #  root.tk.call('source', scidthemes )
+    #except Exception as e:
+    #  dbg.dprint(0,"Could not load scidthemes:",e)  
   return style.theme_names()
 
 ##### ------------------------------------------------------------------------
@@ -84,21 +84,22 @@ def use_theme(root,*args):
     cfg.tkcols.bg = style.lookup('TFrame', 'background')
     cfg.tkcols.fg = style.lookup('TFrame', 'foreground')
     cfg.tkcols.activebackground = style.lookup('TButton', 'focuscolor')
-    if theme.startswith('aw'):
-      if 'HiCol' in cfg.guidefs:   
-        hicol = cfg.guidefs.HiCol
-        root.tk.call('::themeutils::setHighlightColor',theme,hicol)
-        cfg.tkcols.activebackground = hicol
-      if 'BgCol' in cfg.guidefs: 
-        bgcol = cfg.guidefs.BgCol
-        root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
-        cfg.tkcols.bg = bgcol
-      if 'Scroll' in cfg.guidefs: 
-        root.tk.call('::themeutils::setThemeColors',theme, 
-                     'style.progressbar rounded-linetk.TkVersion',
-                     'style.scale circle-rev',
-                     'style.scrollbar-grip none',
-                     'scrollbar.has.arrows false')
     style.theme_use(theme)
+    if 'HiCol' in cfg.guidefs:   
+      hicol = cfg.guidefs.HiCol
+      cfg.tkcols.activebackground = hicol
+      if theme.startswith('aw'):
+        root.tk.call('::themeutils::setHighlightColor',theme,hicol)
+    if 'BgCol' in cfg.guidefs: 
+      bgcol = cfg.guidefs.BgCol
+      cfg.tkcols.bg = bgcol
+      if theme.startswith('aw'):
+        root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
+    if 'Scroll' in cfg.guidefs and theme.startswith('aw'): 
+      root.tk.call('::themeutils::setThemeColors',theme, 
+                   'style.progressbar rounded-linetk.TkVersion',
+                   'style.scale circle-rev',
+                   'style.scrollbar-grip none',
+                   'scrollbar.has.arrows false')
   return style.theme_use()      
           
