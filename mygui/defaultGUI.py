@@ -187,15 +187,19 @@ class ThemeSelect(ttk.Frame):
     theme_change_checkbtn = ttk.Checkbutton(self,
             text="Change themes when combobox item is activated",
             variable=self.theme_autochange)
-    theme_change_radiobtn = ttk.Radiobutton(self,
-            text="Change themes when combobox item is activated",
-            variable=self.theme_autochange)
+    mb = ttk.Menubutton(self,
+            text="Menubutton to see effects")
+    mb.menu =  tk.Menu( mb, tearoff = 0 )
+    mb["menu"] =  mb.menu        
+    mb.menu.add_cascade(label='Test')        
+    mb.menu.add_command(label='Test1')        
+    mb.menu.add_command(label='Test2')        
     
     themes_lbl.grid(           row=0, column=0,ipadx=6, sticky="w")
     self.themes_combo.grid(    row=0, column=1, padx=6, sticky="ew")
     change_btn.grid(           row=0, column=2, padx=6, sticky="e")
     theme_change_checkbtn.grid(row=1, column=0, pady=6, columnspan=3, sticky="w")
-    theme_change_radiobtn.grid(row=2, column=0, pady=6, columnspan=3, sticky="w")
+    mb.grid(row=2, column=0, pady=6, columnspan=3, sticky="w")
     self.columnconfigure(1, weight=1)
 
 
