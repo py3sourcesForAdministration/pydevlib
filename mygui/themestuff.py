@@ -81,6 +81,24 @@ def use_theme(root,*args):
       theme = arg
   #print("____",theme)    
   if theme in themes:
+    cfg.tkcols.bg = style.lookup('TFrame', 'background')
+    cfg.tkcols.fg = style.lookup('TFrame', 'foreground')
+    cfg.tkcols.activebackground = style.lookup('TButton', 'focuscolor')
+    if theme.startswith('aw'):
+      if 'HiCol' in cfg.guidefs:   
+        hicol = cfg.guidefs.HiCol
+        root.tk.call('::themeutils::setHighlightColor',theme,hicol)
+        cfg.tkcols.activebackground = hicol
+      if 'BgCol' in cfg.guidefs: 
+        bgcol = cfg.guidefs.BgCol
+        root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
+        cfg.tkcols.bg = bgcol
+      if 'Scroll' in cfg.guidefs: 
+        root.tk.call('::themeutils::setThemeColors',theme, 
+                     'style.progressbar rounded-linetk.TkVersion',
+                     'style.scale circle-rev',
+                     'style.scrollbar-grip none',
+                     'scrollbar.has.arrows false')
     style.theme_use(theme)
   return style.theme_use()      
           

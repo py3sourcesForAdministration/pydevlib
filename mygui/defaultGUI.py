@@ -25,7 +25,38 @@ except:
   sys.exit(1)
 
 ##### ------------------------------------------------------------------------
-
+class MenubBar(ttk.Frame):
+  def __init__(self,master=None, **kw):
+    self.myname = type(self).__name__
+    dbg.dprint(4,self.myname, "is pydevprog") 
+    cfg.widgets[self.myname] = self
+    super().__init__(master, **kw)
+    self.File = ttk.Menubutton(self)
+    dropF = tk.Menu(self.File)
+    dropF.add_command(label='Quit', command=self.quit())
+    self.File['menu'] = dropF
+    self.File.configure(state='normal', takefocus=False, text='File', width='4')
+    self.File.grid(column='0', row='0', sticky='w')
+    self.Edit = ttk.Menubutton(self)
+    self.Edit.configure(compound='bottom', cursor='arrow', takefocus=False, text='Edit')
+    self.Edit.configure(width='4')
+    self.Edit.grid(column='1', row='0', sticky='w')
+    self.Help = ttk.Menubutton(self)
+    self.Help.configure(text='Help', width='4')
+    self.Help.grid(column='10', row='0', sticky='e')
+    self.frame2_2 = ttk.Frame(self)
+    self.frame2_2.configure(height='20', width='4')
+    self.frame2_2.grid(column='3', columnspan='6', row='0', sticky='ew')
+    self.frame2_2.columnconfigure('3', weight='1')
+  
+#  def toc_menu(self, text):
+#        "Create table of contents as drop-down menu."
+#        toc = Menubutton(self, text='TOC')
+#        drop = Menu(toc, tearoff=False)
+#        for lbl, dex in text.parser.toc:
+#            drop.add_command(label=lbl, command=lambda dex=dex:text.yview(dex))
+#        toc['menu'] = drop
+#        return toc 
 ##### ------------------------------------------------------------------------
 
 ##### ------------------------------------------------------------------------
@@ -34,19 +65,25 @@ class MenuBar(ttk.Frame):
     self.myname = type(self).__name__
     dbg.dprint(4,self.myname, "is pydevprog") 
     cfg.widgets[self.myname] = self
-
     if master is not None:
       super().__init__(master, **kw)
-      self.mainmenu = tk.Menu(master)
+      # colorlist = dict(cfg.tkcols)
+      #colorlist = dict()
+      #colorlist['bg'] = '#d9d9d9'
+      #colorlist['fg'] = '#000000'
+      #colorlist['activebackground'] = '#8FA876'
+      #dbg.dprint(0,'Colorlist',colorlist)
+      #self.mainmenu = tk.Menu(master,tearoff=0,fg='#000000',bg='#d9d9d9')
+      self.mainmenu = tk.Menu(master,tearoff=0,)
       self.master.config(menu=self.mainmenu)
       
-      filemenu = tk.Menu(self.mainmenu, tearoff=0)
+      filemenu = tk.Menu(self.mainmenu, tearoff=0,)
       filemenu.add_command(label='Open',command=self.showc)
       filemenu.add_command(label='Save',command=self.showc)
       filemenu.add_separator()
       filemenu.add_command(label='Exit',command=self.Exit)
       self.mainmenu.add_cascade(label='File',menu=filemenu)
-      helpmenu = tk.Menu(self.mainmenu, tearoff=0)
+      helpmenu = tk.Menu(self.mainmenu, tearoff=0,)
       helpmenu.add_command(label='About',command=self.showc)
       self.mainmenu.add_cascade(label='Help',menu=helpmenu)
 
@@ -128,28 +165,7 @@ class ThemeSelect(ttk.Frame):
     else:   
       self.style = ttk.Style()
     self.theme_autochange = tk.IntVar(self, 0)
-    #if startinit() and 'tksvgpath' in cfg.guidefs and tk.TkVersion == 8.6:
-    #  print(cfg.guidefs.tksvgpath)  
-    #  try: 
-    #    master.tk.call('lappend', 'auto_path', cfg.guidefs.tksvgpath)
-    #    master.tk.call('package', 'require', 'tksvg')
-    #  except Exception as e:
-    #    dbg.dprint(0,"Could not load tksvg:",e)
-    #  print(cfg.guidefs.awthemespath)  
-    #  try:
-    #    master.tk.call('lappend', 'auto_path', cfg.guidefs.awthemespath)
-    #    master.tk.call('package', 'require','awthemes')
-    #    master.tk.call("package", "require", 'awdark') 
-    #    master.tk.call("package", "require", 'awlight')
-    #    master.tk.call("package", "require", 'awarc')
-    #    master.tk.call("package", "require", 'awbreeze')
-    #    master.tk.call("package", "require", 'awclearlooks')
-    #    master.tk.call("package", "require", 'awwinxpblue')
-    #  except Exception as e:
-    #    if startinit():
-    #      dbg.dprint(0,"Could not load awthemes:",e)
-    #    else:
-    #      print("Could not load awthemes:",e) 
+
     self._setup_widgets()
 
   def _change_theme(self):
@@ -241,4 +257,25 @@ class ThemeSelect(ttk.Frame):
 #  except:
 #    pydevprog = False
 #  return pydevprog
-#
+    #if startinit() and 'tksvgpath' in cfg.guidefs and tk.TkVersion == 8.6:
+    #  print(cfg.guidefs.tksvgpath)  
+    #  try: 
+    #    master.tk.call('lappend', 'auto_path', cfg.guidefs.tksvgpath)
+    #    master.tk.call('package', 'require', 'tksvg')
+    #  except Exception as e:
+    #    dbg.dprint(0,"Could not load tksvg:",e)
+    #  print(cfg.guidefs.awthemespath)  
+    #  try:
+    #    master.tk.call('lappend', 'auto_path', cfg.guidefs.awthemespath)
+    #    master.tk.call('package', 'require','awthemes')
+    #    master.tk.call("package", "require", 'awdark') 
+    #    master.tk.call("package", "require", 'awlight')
+    #    master.tk.call("package", "require", 'awarc')
+    #    master.tk.call("package", "require", 'awbreeze')
+    #    master.tk.call("package", "require", 'awclearlooks')
+    #    master.tk.call("package", "require", 'awwinxpblue')
+    #  except Exception as e:
+    #    if startinit():
+    #      dbg.dprint(0,"Could not load awthemes:",e)
+    #    else:
+    #      print("Could not load awthemes:",e) #
