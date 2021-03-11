@@ -67,25 +67,29 @@ class MenuBar(ttk.Frame):
     cfg.widgets[self.myname] = self
     if master is not None:
       super().__init__(master, **kw)
-      # colorlist = dict(cfg.tkcols)
-      #colorlist = dict()
-      #colorlist['bg'] = '#d9d9d9'
-      #colorlist['fg'] = '#000000'
-      #colorlist['activebackground'] = '#8FA876'
-      #dbg.dprint(0,'Colorlist',colorlist)
-      #self.mainmenu = tk.Menu(master,tearoff=0,fg='#000000',bg='#d9d9d9')
-      self.mainmenu = tk.Menu(master,tearoff=0,)
+      dbg.dprint(0,"tkcols",cfg.tkcols)
+      style = ttk.Style(master)
+      if style.theme_use() == 'awdark':
+        cdict = {'bg':'grey26','fg':'white','activebackground':'#8FA876','activeforeground':'white'}
+      elif style.theme_use() == 'black':  
+        cdict = {'bg':'grey26','fg':'white','activebackground':'grey39','activeforeground':'white'}
+      else:
+        cdict = {}  
+      self.mainmenu = tk.Menu(master,tearoff=0,**cdict)
       self.master.config(menu=self.mainmenu)
       
-      filemenu = tk.Menu(self.mainmenu, tearoff=0,)
+      filemenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
       filemenu.add_command(label='Open',command=self.showc)
       filemenu.add_command(label='Save',command=self.showc)
       filemenu.add_separator()
       filemenu.add_command(label='Exit',command=self.Exit)
       self.mainmenu.add_cascade(label='File',menu=filemenu)
-      helpmenu = tk.Menu(self.mainmenu, tearoff=0,)
+      helpmenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
       helpmenu.add_command(label='About',command=self.showc)
       self.mainmenu.add_cascade(label='Help',menu=helpmenu)
+  
+  def children(self):
+    return self.children(),self.slaves()
 
   def showc(self):
     dbg.dprint(0,self.myname,dbg.myname(),"command not yet done")
@@ -124,6 +128,8 @@ class StatusBar(ttk.Frame):
       self.stat_inp.set(1)
     else:
       self.stat_inp.set(0)
+  
+
 
   def display(self,msg):
     print(msg)
