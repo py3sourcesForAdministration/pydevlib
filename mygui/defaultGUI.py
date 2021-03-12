@@ -24,6 +24,37 @@ except:
   print(__file__,"is not a pydevprog") 
   sys.exit(1)
 
+def inittk():
+  top = tk.Tk()
+  if pydevprog:
+    cfg.widgets = aDict()
+    cfg.widgets['MainWindow']['w'] = top
+    if themes_wanted():
+      import mygui.themestuff as themestuff
+      themes    = themestuff.load_all_themes(top)
+      dbg.dprint(4,"Available themes", themes) 
+      selected  = themestuff.use_theme(top,cfg.guidefs.wantedthemes)
+      dbg.dprint(4,"Selected Style is", selected)
+    else: 
+      cfg.guidefs.theme  = 'default' 
+      cfg.guidefs.mode   = 'normal'
+      cfg.guidefs.loaded = False  
+  return top
+
+def themes_loaded():
+  loaded = False
+  if pydevprog and 'guidefs' in cfg \
+    and 'loaded' in cfg.guidefs \
+    and cfg.guidefs.loaded == True:
+      loaded = True
+  return loaded    
+    
+def themes_wanted():
+  if pydevprog and 'guidefs' in cfg and 'wantedthemes' in cfg.guidefs:
+    return True
+  else:   
+    return False
+
 ##### ------------------------------------------------------------------------
 class MenubBar(ttk.Frame):
   def __init__(self,master=None, **kw):

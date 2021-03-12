@@ -44,7 +44,8 @@ def load_all_themes(root):
       root.tk.call('lappend', 'auto_path', themepaths['tksvg'])
       root.tk.call('package', 'require', 'tksvg')
     except Exception as e:
-      dbg.dprint(0,"Could not load tksvg:",e)
+      if pydevprog:
+        dbg.dprint(0,"Could not load tksvg:",e)
   if tkversion >= 8.6:    
     try:
       #print( themepaths['aw'])
@@ -52,19 +53,22 @@ def load_all_themes(root):
       root.tk.call('package', 'require','colorutils')
       root.tk.call('package', 'require','awthemes')       
       root.tk.call("package", "require", 'awdark') 
-      #root.tk.call("package", "require", 'awlight')
-      #root.tk.call("package", "require", 'awarc')
-      #root.tk.call("package", "require", 'awbreeze')
-      #root.tk.call("package", "require", 'awclearlooks')
-      #root.tk.call("package", "require", 'awwinxpblue')
+      root.tk.call("package", "require", 'awlight')
+      root.tk.call("package", "require", 'awarc')
+      root.tk.call("package", "require", 'awbreeze')
+      root.tk.call("package", "require", 'awclearlooks')
+      root.tk.call("package", "require", 'awwinxpblue')
     except Exception as e:
-      dbg.dprint(0,"Could not load awthemes:",e)  
+      if pydevprog:
+        dbg.dprint(0,"Could not load awthemes:",e)  
     #try:
     #  #print( themepaths['scid'])
     #  scidthemes = os.path.join(themepaths['scid'],'scidthemes.tcl')
     #  root.tk.call('source', scidthemes )
     #except Exception as e:
-    #  dbg.dprint(0,"Could not load scidthemes:",e)  
+    #  dbg.dprint(0,"Could not load scidthemes:",e) 
+  if pydevprog:
+    cfg.guidefs.loaded = True 
   return style.theme_names()
 
 ##### ------------------------------------------------------------------------
@@ -80,26 +84,41 @@ def use_theme(root,*args):
     elif isinstance(arg,str):
       theme = arg
   #print("____",theme)    
-  if theme in themes:
-    cfg.tkcols.bg = style.lookup('TFrame', 'background')
-    cfg.tkcols.fg = style.lookup('TFrame', 'foreground')
-    cfg.tkcols.activebackground = style.lookup('TButton', 'focuscolor')
-    style.theme_use(theme)
+  if theme not in themes:
+    cfg.guidefs.theme = 'default'
+  else:
+    cfg.guidefs.theme = theme
+
+  if theme in ['black', 'awdark']:
+    cfg.guidefs.mode = 'dark'
+  else :
+    cfg.guidefs.mode = 'normal'
+    #cfg.tkcols.bg = style.lookup('TFrame', 'background')
+
+  style.theme_use(theme)
+  if theme.startswith('aw'):
     if 'HiCol' in cfg.guidefs:   
       hicol = cfg.guidefs.HiCol
       cfg.tkcols.activebackground = hicol
-      if theme.startswith('aw'):
-        root.tk.call('::themeutils::setHighlightColor',theme,hicol)
-    if 'BgCol' in cfg.guidefs: 
-      bgcol = cfg.guidefs.BgCol
-      cfg.tkcols.bg = bgcol
-      if theme.startswith('aw'):
+      root.tk.call('::themeutils::setHighlightColor',theme,hicol)
+    if 'BgCol' in cfg.guidefs:
+      change_color = 0
+      menu = tk.Menu(root)
+      try:
+        menu.winfo_rgb(cfg.guidefs.BgCol)
+        change_color = 1
+      except: 
+        dbg.dprint(256,"could not use", cfg.guidefs.BgCol, "as background" )
+      menu.delete()  
+      if change_color:
+        bgcol = cfg.guidefs.BgCol
+        cfg.tkcols.bg = bgcol
         root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
     if 'Scroll' in cfg.guidefs and theme.startswith('aw'): 
       root.tk.call('::themeutils::setThemeColors',theme, 
-                   'style.progressbar rounded-linetk.TkVersion',
-                   'style.scale circle-rev',
-                   'style.scrollbar-grip none',
-                   'scrollbar.has.arrows false')
+                  'style.progressbar rounded-linetk.TkVersion',
+                  'style.scale circle-rev',
+                  'style.scrollbar-grip none',
+                  'scrollbar.has.arrows false')
   return style.theme_use()      
           
