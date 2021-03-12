@@ -77,13 +77,13 @@ class MenuBar(ttk.Frame):
         cdict = {}  
       self.mainmenu = tk.Menu(master,tearoff=0,**cdict)
       self.master.config(menu=self.mainmenu)
-      
       filemenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
       filemenu.add_command(label='Open',command=self.showc)
       filemenu.add_command(label='Save',command=self.showc)
       filemenu.add_separator()
       filemenu.add_command(label='Exit',command=self.Exit)
-      self.mainmenu.add_cascade(label='File',menu=filemenu)
+      self.mainmenu.add_cascade(menu=filemenu,label='File')
+      #self.mainmenu.entryconfigure(0,tk.Menu(self.mainmenu, tearoff=0,**cdict),label) 
       helpmenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
       helpmenu.add_command(label='About',command=self.showc)
       self.mainmenu.add_cascade(label='Help',menu=helpmenu)
