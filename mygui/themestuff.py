@@ -18,7 +18,9 @@ themepaths = {
 try:
   from __main__ import prgdir,prgname
   exec(open(os.path.join(prgdir,prgname+"_imp.py")).read())
+  pydevprog = True
 except:
+  pydevprog = False
   if sys.argv[0].find('pydoc'):
     pass # we are running from pydoc3
 
@@ -68,57 +70,71 @@ def load_all_themes(root):
     #except Exception as e:
     #  dbg.dprint(0,"Could not load scidthemes:",e) 
   if pydevprog:
-    cfg.guidefs.loaded = True 
+    cfg.guidefs.loaded = True
+    
   return style.theme_names()
 
 ##### ------------------------------------------------------------------------
-def use_theme(root,*args):
+def use_theme(root,*args,**kwargs):
+  if 'reconfigure' in kwargs:
+    reconfig = kwargs['reconfigure'] 
   style = ttk.Style(root)
   themes = style.theme_names()
   for arg in args:
-    #print(type(arg))
     if isinstance(arg,list) or isinstance(arg,tuple):
       for theme in arg:
         if theme in themes:
           break
     elif isinstance(arg,str):
       theme = arg
-  #print("____",theme)    
   if theme not in themes:
     cfg.guidefs.theme = 'default'
   else:
     cfg.guidefs.theme = theme
+  cfg.tkcols.clear()
+  
+  style.theme_use(theme)
+  deffg  = str(style.lookup('TMenuButton', 'foreground'))
+  defbg  = str(style.lookup('TMenubutton', 'background'))
+  defafg = str(style.lookup('TMenubutton', 'foreground',state=['active']))
+  defabg = str(style.lookup('TMenubutton', 'background',state=['active']))
+  dbg.dprint(2,theme,'|',deffg,'|',defbg,'|',defafg,'|',defabg,'|')
 
   if theme in ['black', 'awdark']:
     cfg.guidefs.mode = 'dark'
   else :
     cfg.guidefs.mode = 'normal'
-    #cfg.tkcols.bg = style.lookup('TFrame', 'background')
-
-  style.theme_use(theme)
+  cfg.tkcols.fg = deffg
+  cfg.tkcols.bg = defbg
+  cfg.tkcols.activeforeground = defafg
+  cfg.tkcols.activebackground = defabg
+  
   if theme.startswith('aw'):
-    if 'HiCol' in cfg.guidefs:   
-      hicol = cfg.guidefs.HiCol
-      cfg.tkcols.activebackground = hicol
+    if 'HiCol' in cfg.guidefs and not reconfig:   
+      cfg.tkcols.activebackground = cfg.guidefs.HiCol
       root.tk.call('::themeutils::setHighlightColor',theme,hicol)
-    if 'BgCol' in cfg.guidefs:
-      change_color = 0
-      menu = tk.Menu(root)
-      try:
-        menu.winfo_rgb(cfg.guidefs.BgCol)
-        change_color = 1
-      except: 
-        dbg.dprint(256,"could not use", cfg.guidefs.BgCol, "as background" )
-      menu.delete()  
-      if change_color:
-        bgcol = cfg.guidefs.BgCol
-        cfg.tkcols.bg = bgcol
-        root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
+    if 'BgCol' in cfg.guidefs and not reconfig:
+      bgcol = cfg.guidefs.BgCol
+      cfg.tkcols.bg = bgcol
+      root.tk.call('::themeutils::setBackgroundColor',theme,bgcol)
+    else:
+      cfg.tkcols.bg = defbg    
     if 'Scroll' in cfg.guidefs and theme.startswith('aw'): 
       root.tk.call('::themeutils::setThemeColors',theme, 
                   'style.progressbar rounded-linetk.TkVersion',
                   'style.scale circle-rev',
                   'style.scrollbar-grip none',
                   'scrollbar.has.arrows false')
+  ### reconfigure menubar
+  if 'menubar' in cfg.widgets:
+    newdict = cfg.widgets.menubar
+    for menu in newdict:
+      dbg.dprint(4,menu,newdict[menu])
+      newdict[menu].configure(**cfg.tkcols) 
+  if 'contentmenu' in cfg.widgets:
+    newdict = cfg.widgets.contentmenu
+    for menu in newdict:
+      dbg.dprint(4,menu,newdict[menu])
+      newdict[menu].configure(**cfg.tkcols) 
   return style.theme_use()      
           

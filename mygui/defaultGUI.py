@@ -9,7 +9,7 @@ from addict import Dict as aDict
 from PIL import ImageTk
 # PhotoImage = ImageTk.PhotoImage
 try:
-  from __main__ import prgdir,prgname
+  from __main__ import prgdir,prgname   
   exec(open(os.path.join(prgdir,prgname+"_imp.py")).read())
 except:
   if sys.argv[0].find('pydoc'):
@@ -18,17 +18,18 @@ except:
 try:
   from __main__ import dbg,cfg
   pydevprog = True
-  #print(__file__,"is a pydevprog") 
 except:
   pydevprog = False 
   print(__file__,"is not a pydevprog") 
   sys.exit(1)
-
+  
 def inittk():
   top = tk.Tk()
+  top.option_add('*tearoff', 0)
+  top.option_add('*tearOff', False)
   if pydevprog:
     cfg.widgets = aDict()
-    cfg.widgets['MainWindow']['w'] = top
+    cfg.widgets['MainWindow'] = top
     if themes_wanted():
       import mygui.themestuff as themestuff
       themes    = themestuff.load_all_themes(top)
@@ -63,7 +64,7 @@ class MenubBar(ttk.Frame):
     cfg.widgets[self.myname] = self
     super().__init__(master, **kw)
     self.File = ttk.Menubutton(self)
-    dropF = tk.Menu(self.File)
+    dropF = tk.Menu(self.File,tearoff=0)
     dropF.add_command(label='Quit', command=self.quit())
     self.File['menu'] = dropF
     self.File.configure(state='normal', takefocus=False, text='File', width='4')
@@ -94,49 +95,52 @@ class MenubBar(ttk.Frame):
 class MenuBar(ttk.Frame):
   def __init__(self,master=None, **kw):
     self.myname = type(self).__name__
-    dbg.dprint(4,self.myname, "is pydevprog") 
-    cfg.widgets[self.myname] = self
     if master is not None:
       super().__init__(master, **kw)
-      dbg.dprint(0,"tkcols",cfg.tkcols)
+      dbg.dprint(4,"tkcols",cfg.tkcols,'guidefs',cfg.guidefs)
       style = ttk.Style(master)
-      if style.theme_use() == 'awdark':
-        cdict = {'bg':'grey26','fg':'white','activebackground':'#8FA876','activeforeground':'white'}
-      elif style.theme_use() == 'black':  
-        cdict = {'bg':'grey26','fg':'white','activebackground':'grey39','activeforeground':'white'}
+      if pydevprog and 'tkcols' in cfg:
+        cdict = cfg.tkcols
+      #  cdict = {'bg':'grey26','fg':'white','activebackground':'grey39','activeforeground':'white'}
       else:
         cdict = {}  
-      self.mainmenu = tk.Menu(master,tearoff=0,**cdict)
+      self.mainmenu = tk.Menu(master,tearoff=0,**cdict,relief='flat')
       self.master.config(menu=self.mainmenu)
-      filemenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
-      filemenu.add_command(label='Open',command=self.showc)
-      filemenu.add_command(label='Save',command=self.showc)
-      filemenu.add_separator()
-      filemenu.add_command(label='Exit',command=self.Exit)
-      self.mainmenu.add_cascade(menu=filemenu,label='File')
+      self.filemenu = tk.Menu(self.mainmenu,**cdict)
+      self.filemenu.add_command(label='Open',command=self.showc)
+      self.filemenu.add_command(label='Save',command=self.showc)
+      self.filemenu.add_separator()
+      self.filemenu.add_command(label='Exit',command=self.Exit)
+      self.mainmenu.add_cascade(menu=self.filemenu,label='File')
       #self.mainmenu.entryconfigure(0,tk.Menu(self.mainmenu, tearoff=0,**cdict),label) 
-      helpmenu = tk.Menu(self.mainmenu, tearoff=0,**cdict)
-      helpmenu.add_command(label='About',command=self.showc)
-      self.mainmenu.add_cascade(label='Help',menu=helpmenu)
+      self.helpmenu = tk.Menu(self.mainmenu,**cdict)
+      self.helpmenu.add_command(label='About',command=self.showc)
+      self.mainmenu.add_cascade(label='Help',menu=self.helpmenu)
+      if pydevprog:
+        dbg.dprint(4,self.myname, "is pydevprog") 
+        cfg.widgets['class'][self.myname] = self
+        cfg.widgets['menubar']['main'] = self.mainmenu
+        cfg.widgets['menubar']['File'] = self.filemenu
+        cfg.widgets['menubar']['Help'] = self.helpmenu
   
   def children(self):
     return self.children(),self.slaves()
 
   def showc(self):
-    dbg.dprint(0,self.myname,dbg.myname(),"command not yet done")
+    if pydevprog:
+      dbg.dprint(0,self.myname,dbg.myname(),"command not yet done")
 
   def Exit(self):
     self.quit()
   
   def About(self):
-    dbg.dprint(0,self.myname,dbg.myname(),"command not yet done")
+    if pydevprog:
+      dbg.dprint(0,self.myname,dbg.myname(),"command not yet done")
 
 ##### ------------------------------------------------------------------------
 class StatusBar(ttk.Frame):
   def __init__(self,master=None, **kw):
     self.myname = type(self).__name__
-    dbg.dprint(4,self.myname, "is pydevprog") 
-    cfg.widgets[self.myname] = self
     super().__init__(master, **kw)
     self.stat_msg = tk.StringVar()
     self.stat_inp = tk.IntVar(0)
@@ -152,18 +156,20 @@ class StatusBar(ttk.Frame):
     self.status.grid(row=0,column=0,sticky='w',padx=2)
     self.message.grid(row=0,column=1,sticky='ew',padx=0,pady=2)
     self.grid_columnconfigure(1,weight=1)
-  
+    if pydevprog:
+      dbg.dprint(4,self.myname, "is pydevprog") 
+      cfg.widgets['class'][self.myname] = self
+      #cfg.widgets['statusbar']['w'] = self
+
   def toggle_status(self):
     print("in toggle, current state", self.stat_inp.get())
     if self.stat_inp.get() == 0:
       self.stat_inp.set(1)
     else:
       self.stat_inp.set(0)
-  
-
 
   def display(self,msg):
-    print(msg)
+    #print(msg)
     self.stat_msg.set(msg) 
     print(self.message, type(self.message)) 
     self.message.after(10000,self.clear)
@@ -176,8 +182,6 @@ class StatusBar(ttk.Frame):
 class TestContent(ttk.Frame):
   def __init__(self,master=None, **kw):
     self.myname = type(self).__name__
-    dbg.dprint(4,self.myname, "is pydevprog") 
-    cfg.widgets[self.myname] = self
     super().__init__(master,**kw)
     self.l1 = ttk.Label(self, text="   F2-L1\ncentered",relief='ridge',anchor='center')
     self.l2 = ttk.Label(self, text="F2-L2",relief='ridge',anchor='center')
@@ -189,25 +193,34 @@ class TestContent(ttk.Frame):
     self.grid_columnconfigure(1,weight=1)
     self.grid_columnconfigure(2,weight=1)
     self.grid_rowconfigure(0,weight=1)
+    if pydevprog:
+      dbg.dprint(4,self.myname, "is pydevprog") 
+      cfg.widgets['class'][self.myname] = self
+      #      cfg.widgets['content']['w'] = self
+
 
 ##### ------------------------------------------------------------------------
 class ThemeSelect(ttk.Frame):
   def __init__(self,master=None, **kw):
     self.myname = type(self).__name__
-    dbg.dprint(4,self.myname, "is pydevprog") 
-    cfg.widgets[self.myname] = self
     super().__init__(master, **kw)
     if master is not None:
       self.style = ttk.Style(master)
     else:   
       self.style = ttk.Style()
     self.theme_autochange = tk.IntVar(self, 0)
-
     self._setup_widgets()
+    if pydevprog:
+      dbg.dprint(4,self.myname, "is pydevprog") 
+      cfg.widgets['class'][self.myname] = self
+      #cfg.widgets['content'] = self
 
   def _change_theme(self):
-    self.style.theme_use(self.themes_combo.get())
-
+    if pydevprog: 
+      import mygui.themestuff as themestuff
+      themestuff.use_theme(self.master,self.themes_combo.get(),reconfigure=True)
+    else:  
+      self.style.theme_use(self.themes_combo.get())
 
   def _theme_sel_changed(self, widget):
     if self.theme_autochange.get():
@@ -226,7 +239,9 @@ class ThemeSelect(ttk.Frame):
             variable=self.theme_autochange)
     mb = ttk.Menubutton(self,
             text="Menubutton to see effects")
-    mb.menu =  tk.Menu( mb, tearoff = 0 )
+    mb.menu =  tk.Menu( mb )
+    if pydevprog:
+      cfg.widgets['contentmenu']['Themeselect_Effect_Button'] = mb.menu
     mb["menu"] =  mb.menu        
     mb.menu.add_cascade(label='Test')        
     mb.menu.add_command(label='Test1')        
