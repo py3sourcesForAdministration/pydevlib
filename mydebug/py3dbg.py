@@ -58,6 +58,7 @@ def byvalue(obj):
     #print("EXCEPTION:",e)
     return obj 
 
+
 def singleton(cls):
   return cls()
 
@@ -339,6 +340,49 @@ class dbg:
       dbg.dprint(256,msg)
     dbg.leavesub()
     sys.exit(1)
+
+  ###------------------------------------------ 
+  def key_exists(self,d,checkstring):
+    """ helper function for dict or addict, to query for
+    existence of a keys but avoid autovivification of this key, 
+    (default for addict)
+    d is the dictionary to search
+    checkstring is a string in form 'dict.l1.l2.l3' as used in addict
+    Returns only True if key exist, in any other case False
+    """
+    if not isinstance(d,dict):
+      dbg.dprint(0,"first parameter must be a dictionary")
+      return False
+    if not isinstance(checkstring,str):
+      dbg.dprint(0,"second parameter must be a string")
+      return False
+    if not checkstring.startswith('.'):
+      dbg.dprint(0,"second parameter must start with a dot representing the dict")
+      return False
+
+    parts = checkstring.split('.')
+    parts[0] ='dict'
+    tmpdict = d
+    for i in range(1,len(parts)):
+      dbg.dprint(8,i,"is ",parts[i],"in", '.'.join(parts[0:i]),"?")
+      if parts[i] in tmpdict:
+        result = True
+        if i < (len(parts) - 1):
+          tmpdict = tmpdict[parts[i]]
+          if not isinstance(tmpdict,dict):
+            result = False
+            dbg.dprint(0,str('.'.join(parts[0:i+1])),"is",type(tmpdict))
+            break
+      else:
+        result = False
+        break
+    if result :
+      dbg.dprint(16,"dict['" + "']['".join(parts[1:i+1]) + "']")
+    else:   
+      dbg.dprint(16,"dict['" + "']['".join(parts[1:i]) + "']")
+
+    del(tmpdict)  
+    return result     
 
   #############################################
   ### old funtions dprintl is old dprint. dprintref is unchanged      
