@@ -95,4 +95,8 @@ Besser ein bare Repository, in dem beide schreiben können.
 Tip für VScode: gitautofetch einrichten, dann werden die Änderungen, die andere im remote gemacht haben 
 auch unter source Control angezeigt. Leider nur mit dem Sync Zeichen, also vor dem Arbeiten erstmal nachsehen,
 ob man auf dem aktuellen Stand des Repos ist.   
-
+##################################################################
+eine Konfigurationsdatei vor Änderungen beim Checkout schützen:
+git update-index --skip-worktree sidx_cfg.py
+git betrachtet dann die Datei als unverändert, auch wenn lokale Änderungen
+vorgenommen werden. Das geht solange, wie die Datei nicht im Upstream repo geändert wird. Das sollte dann zu Fehlermeldungen beim checkout führen.
