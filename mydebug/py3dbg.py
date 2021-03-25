@@ -13,6 +13,7 @@ reset    = Style.RESET_ALL
 fgg      = Style.BRIGHT + Fore.GREEN
 fgy      = Style.BRIGHT + Fore.YELLOW
 fgr      = Style.BRIGHT + Fore.RED
+fgc      = Style.BRIGHT + Fore.CYAN
 etok1    = Style.BRIGHT + "-> ENTER" + Style.RESET_ALL
 etok2    = Style.BRIGHT + "FROM" + Style.RESET_ALL
 ltok1    = Style.BRIGHT + "<- LEAVE" + Style.RESET_ALL
@@ -235,11 +236,18 @@ class dbg:
       elif lvl >= 256 : 
         self.__col = fgr
         func(self,lvl,*args,**kwargs)
+      elif lvl == 128 and self.lvl & lvl:
+        self.__col = fgc
+        func(self,lvl,*args,**kwargs)
+      elif lvl == 64 and self.lvl & lvl:
+        self.__col = fgc
+        func(self,lvl,*args,**kwargs)
       elif self.lvl & lvl :
         self.__col = fgg
         func(self,lvl,*args,**kwargs)
       else: 
         pass
+      #func(self,lvl,*args,**kwargs)
     return function_wrapper 
   
   #############################################
