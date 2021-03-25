@@ -340,7 +340,41 @@ class dbg:
       dbg.dprint(256,msg)
     dbg.leavesub()
     sys.exit(1)
-
+  
+  #####------------------------------------------------------------------------
+  def obj_from_file(self,filename,arg,default=None):
+    """ Convenience function to read something from a file with exec.
+        Be careful to not input a filename from aDict with more than one
+        level. Autovivification of intermediate steps will occur.
+    """ 
+    print(filename)   
+    tmpdict = {}
+    ret = default  
+    if not isinstance(filename,str):
+      dbg.dprint(0,"Filename is not a string")
+      if type(filename) == type(aDict()):
+        dbg.dprint(0,"you possibly created a new item in aDict")
+      dbg.dprint(2,"Type:", type(filename),"Value:",filename) 
+      return ret
+    
+    try:       ### file exists an is readable ?
+      readobj = open(filename).read()
+    except Exception as e:
+      dbg.dprint(256,"could not read",filename,e)
+      return ret
+    try:       ### file can be exec'd ?
+      exec(readobj,tmpdict)
+    except Exception as e:
+      dbg.dprint(256,"could not exec",filename,e)
+      return ret 
+    if arg in tmpdict:   ### contains object
+      ret = tmpdict[arg]
+    else:
+      dbg.dprint(256,filename, "does not contain",arg)
+  
+    del tmpdict
+    return ret      
+  
   ###------------------------------------------ 
   def key_exists(self,d,checkstring):
     """ helper function for dict or addict, to query for
