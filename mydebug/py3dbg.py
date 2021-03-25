@@ -347,7 +347,6 @@ class dbg:
         Be careful to not input a filename from aDict with more than one
         level. Autovivification of intermediate steps will occur.
     """ 
-    print(filename)   
     tmpdict = {}
     ret = default  
     if not isinstance(filename,str):
