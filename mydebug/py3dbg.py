@@ -139,7 +139,7 @@ class dbg:
           self.__lvl = self.__lvl & ~new
           #self.dprint(0,"- self.__lvl: ",self.__lvl) 
           if self.__lvl < 0:
-            dbg.dprint(256,"Das sollte aber nicht vorkommen! Level",self.__lvl)
+            self.dprint(256,"Das sollte aber nicht vorkommen! Level",self.__lvl)
             self.__lvl = 0
         else:
           self.__lvl = 0
@@ -303,7 +303,7 @@ class dbg:
         head = 'DBG'
       #print(f"{start}DBG {fgr}{self.__precaller()}{reset}")
       print(f"{start}{head} {self.col}{lvl:03d}{reset} : {name} = ",end='')
-      dbg.__dprintr(lvl,ref,depth=depth+1)
+      self.__dprintr(lvl,ref,depth=depth+1)
     else:
       ### handle dicts 
       if isinstance(ref,dict): 
@@ -313,40 +313,41 @@ class dbg:
             print(f"{start}{tab*(depth+1)}'{k}'{' '*(20-len(k))}: ",end='')
           else:
             print(f"{start}{tab*(depth+1)} {k} {' '*(20-len(repr(k)))}: ",end='')
-          dbg.__dprintr(lvl,v,depth=depth+1)
-        dbg.__dprintroff(start,depth,dictoff)
+          self.__dprintr(lvl,v,depth=depth+1)
+        self.__dprintroff(start,depth,dictoff)
       ### handle lists 
       elif isinstance(ref,list):
         print(f"{liston}")
         for item in (ref):
           print(f"{start}{tab*(depth+1)}",end='')
-          dbg.__dprintr(lvl,item,depth=depth+1) 
-        dbg.__dprintroff(start,depth,listoff)
+          self.__dprintr(lvl,item,depth=depth+1) 
+        self.__dprintroff(start,depth,listoff)
       ### handle tuples  
       elif isinstance(ref,tuple):
         print(f"{tupleon}")
         for item in (ref):
           print(f"{start}{tab*(depth+1)}",end='')
-          dbg.__dprintr(lvl,item,depth=depth+1) 
-        dbg.__dprintroff(start,depth,tupleoff)
+          self.__dprintr(lvl,item,depth=depth+1) 
+        self.__dprintroff(start,depth,tupleoff)
       ### simple types without recursion  
       elif isinstance(ref,str):
         print(f"'{ref}'",end="")
-        dbg.__dprintroff(start,depth,False)
+        self.__dprintroff(start,depth,False)
       elif isinstance(ref,numbers.Number):
         print(f"{ref}",end='')
-        dbg.__dprintroff(start,depth,False)
+        self.__dprintroff(start,depth,False)
       else:
         print(f"repr: {repr(ref)}",end='')
-        dbg.__dprintroff(start,depth,False)
+        self.__dprintroff(start,depth,False)
 
   #############################################
   def exitf(self,*reason,**kwargs):
     """ kill calling programm with message """
-    dbg.dprint(256,"Reason for EXIT:")
+    self.entersub()
+    self.dprint(256,"Reason for EXIT:")
     for msg in reason:
-      dbg.dprint(256,msg)
-    dbg.leavesub()
+      self.dprint(256,msg)
+    self.leavesub()
     sys.exit(1)
   
   #####------------------------------------------------------------------------
@@ -358,26 +359,26 @@ class dbg:
     tmpdict = {}
     ret = default  
     if not isinstance(filename,str):
-      dbg.dprint(0,"Filename is not a string")
+      self.dprint(0,"Filename is not a string")
       if type(filename) == type(aDict()):
-        dbg.dprint(0,"you possibly created a new item in aDict")
-      dbg.dprint(2,"Type:", type(filename),"Value:",filename) 
+        self.dprint(0,"you possibly created a new item in aDict")
+      self.dprint(2,"Type:", type(filename),"Value:",filename) 
       return ret
     
     try:       ### file exists an is readable ?
       readobj = open(filename).read()
     except Exception as e:
-      dbg.dprint(256,"could not read",filename,e)
+      self.dprint(256,"could not read",filename,e)
       return ret
     try:       ### file can be exec'd ?
       exec(readobj,tmpdict)
     except Exception as e:
-      dbg.dprint(256,"could not exec",filename,e)
+      self.dprint(256,"could not exec",filename,e)
       return ret 
     if arg in tmpdict:   ### contains object
       ret = tmpdict[arg]
     else:
-      dbg.dprint(256,filename, "does not contain",arg)
+      self.dprint(256,filename, "does not contain",arg)
   
     del tmpdict
     return ret      
@@ -392,35 +393,35 @@ class dbg:
     Returns only True if key exist, in any other case False
     """
     if not isinstance(d,dict):
-      dbg.dprint(0,"first parameter must be a dictionary")
+      self.dprint(0,"first parameter must be a dictionary")
       return False
     if not isinstance(checkstring,str):
-      dbg.dprint(0,"second parameter must be a string")
+      self.dprint(0,"second parameter must be a string")
       return False
     if not checkstring.startswith('.'):
-      dbg.dprint(0,"second parameter must start with a dot representing the dict")
+      self.dprint(0,"second parameter must start with a dot representing the dict")
       return False
 
     parts = checkstring.split('.')
     parts[0] ='dict'
     tmpdict = d
     for i in range(1,len(parts)):
-      dbg.dprint(8,i,"is ",parts[i],"in", '.'.join(parts[0:i]),"?")
+      self.dprint(8,i,"is ",parts[i],"in", '.'.join(parts[0:i]),"?")
       if parts[i] in tmpdict:
         result = True
         if i < (len(parts) - 1):
           tmpdict = tmpdict[parts[i]]
           if not isinstance(tmpdict,dict):
             result = False
-            dbg.dprint(0,str('.'.join(parts[0:i+1])),"is",type(tmpdict))
+            self.dprint(0,str('.'.join(parts[0:i+1])),"is",type(tmpdict))
             break
       else:
         result = False
         break
     if result :
-      dbg.dprint(16,"dict['" + "']['".join(parts[1:i+1]) + "']")
+      self.dprint(16,"dict['" + "']['".join(parts[1:i+1]) + "']")
     else:   
-      dbg.dprint(16,"dict['" + "']['".join(parts[1:i]) + "']")
+      self.dprint(16,"dict['" + "']['".join(parts[1:i]) + "']")
 
     del(tmpdict)  
     return result     
