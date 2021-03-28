@@ -34,7 +34,7 @@ def inittk():
       import mygui.themestuff as themestuff
       themes    = themestuff.load_all_themes(top)
       dbg.dprint(4,"Available themes", themes) 
-      selected  = themestuff.use_theme(top,cfg.guidefs.wantedthemes)
+      selected  = themestuff.use_theme(top,themes,cfg.guidefs.wantedthemes)
       dbg.dprint(4,"Selected Style is", selected)
     else: 
       cfg.guidefs.theme  = 'default' 
@@ -206,8 +206,10 @@ class ThemeSelect(ttk.Frame):
     super().__init__(master, **kw)
     if master is not None:
       self.style = ttk.Style(master)
+      self.master = master
     else:   
       self.style = ttk.Style()
+      self.master = None
     self.theme_autochange = tk.IntVar(self, 0)
     self._setup_widgets()
     if pydevprog:
@@ -218,7 +220,7 @@ class ThemeSelect(ttk.Frame):
   def _change_theme(self):
     if pydevprog: 
       import mygui.themestuff as themestuff
-      themestuff.use_theme(self.master,self.themes_combo.get(),reconfigure=True)
+      themestuff.use_theme(self.master,self.themes,self.themes_combo.get(),reconfigure=True)
     else:  
       self.style.theme_use(self.themes_combo.get())
 
@@ -227,10 +229,12 @@ class ThemeSelect(ttk.Frame):
       self._change_theme()
 
   def _setup_widgets(self):
+    if pydevprog: 
+      import mygui.themestuff as themestuff
     themes_lbl = ttk.Label(self, text="Themes")
-    themes = sorted(self.style.theme_names())
-    self.themes_combo = ttk.Combobox(self, values=themes, state="readonly")
-    self.themes_combo.set(themes[0])
+    self.themes = sorted(themestuff.load_all_themes(self.master))
+    self.themes_combo = ttk.Combobox(self, values=self.themes, state="readonly")
+    self.themes_combo.set(self.themes[0])
     self.themes_combo.bind("<<ComboboxSelected>>", self._theme_sel_changed)
     change_btn = ttk.Button(self, text='Change Theme',
             command=self._change_theme)
