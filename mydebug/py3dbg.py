@@ -228,26 +228,24 @@ class dbg:
 
   #############################################
   def __printout(func):
-    """ decorator to decide if printfunction is called """
+    """ decorator to decide if print is called 
+        and colorize output   
+    """
     def function_wrapper(self,lvl,*args,**kwargs):
       if lvl == 0 :
         self.__col = fgy  
-        func(self,lvl,*args,**kwargs)
-      elif lvl >= 256 : 
+      elif lvl == 256:
         self.__col = fgr
-        func(self,lvl,*args,**kwargs)
-      elif lvl == 128 and self.lvl & lvl:
-        self.__col = fgc
-        func(self,lvl,*args,**kwargs)
-      elif lvl == 64 and self.lvl & lvl:
-        self.__col = fgc
-        func(self,lvl,*args,**kwargs)
-      elif self.lvl & lvl :
-        self.__col = fgg
-        func(self,lvl,*args,**kwargs)
+      elif self.lvl & lvl:
+        if lvl == 1: 
+          self.__col = fgb
+        elif lvl in (64,128,192):
+          self.__col = fgc
+        else:
+          self.__col = fgg  
       else: 
-        pass
-      #func(self,lvl,*args,**kwargs)
+        return
+      func(self,lvl,*args,**kwargs)
     return function_wrapper 
   
   #############################################
@@ -449,6 +447,25 @@ class dbg:
     
 ###################################################################################
 ###            Muell
+
+      #if lvl == 0 :
+      #  self.__col = fgy  
+      #  func(self,lvl,*args,**kwargs)
+      #elif lvl >= 256 : 
+      #  self.__col = fgr
+      #  func(self,lvl,*args,**kwargs)
+      #elif lvl == 128 and self.lvl & lvl:
+      #  self.__col = fgc
+      # func(self,lvl,*args,**kwargs)
+      #elif lvl == 64 and self.lvl & lvl:
+      #  self.__col = fgc
+      #  func(self,lvl,*args,**kwargs)
+      #elif self.lvl & lvl :
+      #  self.__col = fgg
+      #  func(self,lvl,*args,**kwargs)
+      #else: 
+      #  pass
+      #func(self,lvl,*args,**kwargs)
   #  @lvl.setter
   #  def lvl(self,lvl):
   #    self.__lvl = lvl
