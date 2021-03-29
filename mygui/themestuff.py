@@ -34,15 +34,19 @@ except:
 
 ##### ------------------------------------------------------------------------
 def load_all_themes(root):
-  style = ttk.Style(root)
-  already_loaded = style.theme_names()
+  if pydevprog:
+    dbg.entersub()
+    if dbg.key_exists(cfg,'.guidefs.available_themes'):
+      dbg.leavesub()
+      return cfg.guidefs.available_themes
 
+  style = ttk.Style(root)
   tkversion = tk.TkVersion
-  themelist = [] 
+  themelist = list(style.theme_names()) 
   if tkversion >= 8.5: 
     blacktheme = os.path.join(themepaths['black'],'black.tcl')
     try:
-      if 'black' not in already_loaded:
+      if 'black' not in themelist:
         root.tk.call('source', blacktheme )
         themelist.append('black')
     except Exception as e:
@@ -57,128 +61,119 @@ def load_all_themes(root):
     except Exception as e:
       if pydevprog:
         dbg.dprint(0,"Could not load tksvg:",e)
+  
   if tkversion >= 8.6:    
     try:
       #print( themepaths['aw'])
       root.tk.call('lappend', 'auto_path', themepaths['aw'] ) 
       root.tk.call('package', 'require','awthemes')       
       root.tk.call('package', 'require','colorutils')
-      themes = [f for f in os.listdir(themepaths['aw']) if os.path.isfile(os.path.join(themepaths['aw'], f)) and f.startswith('aw') and f.endswith('.tcl')]
-      #print(themes)
+      themes = [f for f in os.listdir(themepaths['aw']) \
+                if os.path.isfile(os.path.join(themepaths['aw'], f)) \
+                and f.startswith('aw') and f.endswith('.tcl')]
       for f in themes:
         if f == 'awthemes.tcl' or f == 'awtemplate.tcl':
           continue
         t = f.split('.')[0]
-        themelist.append(t)
-      #root.tk.call("package", "require", 'awdark') 
-      #root.tk.call("package", "require", 'awlight')
-      #root.tk.call("package", "require", 'awarc')
-      #root.tk.call("package", "require", 'awbreeze')
-      #root.tk.call("package", "require", 'awbreezedark')
-      #root.tk.call("package", "require", 'awclearlooks')
-      #root.tk.call("package", "require", 'awwinxpblue')
+        if t not in themelist:
+          themelist.append(t)
     except Exception as e:
       if pydevprog:
         dbg.dprint(0,"Could not load awthemes:",e)  
+    
     try:
     #  #print( themepaths['scid'])
       scidthemes = os.path.join(themepaths['scid'],'scidthemes.tcl')
-      if 'scidgrey' not in already_loaded:
+      if 'scidgrey' not in themelist:
         root.tk.call('source', scidthemes )
+      themes = [f for f in os.listdir(themepaths['scid']) \
+               if os.path.isdir(os.path.join(themepaths['scid'], f))]
+      for f in themes:
+        if f == 'scid':
+          continue
+        if f not in themelist:
+          themelist.append(f)
+
     except Exception as e:
-      dbg.dprint(0,"Could not load scidthemes:",e) 
-    themes = [f for f in os.listdir(themepaths['scid']) if os.path.isdir(os.path.join(themepaths['scid'], f))]
-    #print(themes)
-    for f in themes:
-      if f == 'scid':
-        continue
-      themelist.append(f)
+      if pydevprog:
+        dbg.dprint(0,"Could not load scidthemes:",e) 
+
   if pydevprog:
-    cfg.guidefs.loaded = True
+    cfg.guidefs.loaded = True  
+    cfg.guidefs.available_themes = themelist
+    dbg.dprint(4,dbg.myname(),"Loaded Themes:",themelist)
+    dbg.leavesub()
     
   return themelist
 
 ##### ------------------------------------------------------------------------
-def use_theme(root,themes,*args,**kwargs):
-  reconfig = False  
-  if 'reconfigure' in kwargs:
-    reconfig = kwargs['reconfigure']
+def use_theme(root,wanted,**kwargs):
+  """ This function expects:
+  1. the top widget
+  2. a single theme name or a list of wanted themes (first match is selected)
+  3. optionally the keyword reconfigure=True|False
+  Selects the wanted theme or default if wanted is not available
+  Sets the colors of known (pydevprog) menus 
+  """   
   style = ttk.Style(root)
-  for arg in args:
-    if isinstance(arg,list) or isinstance(arg,tuple):
-      for theme in arg:
+  if pydevprog:
+    dbg.entersub()
+    cfg.tkcols.clear()
+  themes = load_all_themes(root)    
+  if isinstance(wanted,list) or isinstance(wanted,tuple):
+    for theme in wanted:
         if theme in themes:
           break
-    elif isinstance(arg,str):
-      theme = arg
+  elif isinstance(wanted,str):
+    theme = wanted
   if theme not in themes:
-    cfg.guidefs.theme = 'default'
-  else:
-    cfg.guidefs.theme = theme
-  cfg.tkcols.clear()
-  
-  #style.theme_use(theme)
-  #deffg  = str(style.lookup('TMenuButton', 'foreground'))
-  #defbg  = str(style.lookup('TMenubutton', 'background'))
-  #defafg = str(style.lookup('TMenubutton', 'foreground',state=['active']))
-  #defabg = str(style.lookup('TMenubutton', 'background',state=['active']))
-   
-  if theme in ['black', 'awdark','awbreezedark']:
-    cfg.guidefs.mode = 'dark'
-  else :
-    cfg.guidefs.mode = 'normal'
-  #cfg.tkcols.fg = deffg
-  #cfg.tkcols.bg = defbg
-  #cfg.tkcols.activeforeground = defafg
-  #cfg.tkcols.activebackground = defabg
-  
+    theme = 'default'
+
+  #print("Selected",theme) 
   if theme.startswith('aw'):
-    root.tk.call('package', 'require','awthemes')       
-    root.tk.call('package', 'require','colorutils')       
-    if 'BgCol' in cfg.guidefs:
-      dbg.dprint(0, "Wanted BG:",cfg.guidefs.BgCol)
-      #bgcol = cfg.guidefs.BgCol
-      #dbg.dprint(0,"set bgcol",bgcol)  
-      #cfg.tkcols.bg = bgcol
-      #root.tk.call('package', 'require','awthemes')       
-      #root.tk.call('package', 'require','colorutils')       
-      root.tk.call('::themeutils::setBackgroundColor',theme,cfg.guidefs.BgCol)
-    if 'HiCol' in cfg.guidefs: 
-      dbg.dprint(0, "Wanted Hi:",cfg.guidefs.HiCol)
-      #hicol = cfg.guidefs.HiCol  
-      #dbg.dprint(0,"set hicol",hicol)  
-      #cfg.tkcols.activebackground = hicol
-      root.tk.call('::themeutils::setHighlightColor',theme,cfg.guidefs.HiCol)
-    #else:
-    #  cfg.tkcols.bg = defbg    
-    if 'Scroll' in cfg.guidefs: 
-      root.tk.call('::themeutils::setThemeColors',theme, 
+    if pydevprog and theme not in style.theme_names():
+      root.tk.call('package', 'require','awthemes')       
+      root.tk.call('package', 'require','colorutils')       
+      if 'BgCol' in cfg.guidefs:
+        #dbg.dprint(0, "Wanted BG:",cfg.guidefs.BgCol)
+        root.tk.call('::themeutils::setBackgroundColor',theme,cfg.guidefs.BgCol)
+      if 'HiCol' in cfg.guidefs: 
+        #dbg.dprint(0, "Wanted Hi:",cfg.guidefs.HiCol)
+        root.tk.call('::themeutils::setHighlightColor',theme,cfg.guidefs.HiCol)
+      if 'Scroll' in cfg.guidefs: 
+        root.tk.call('::themeutils::setThemeColors',theme, 
                   'style.progressbar rounded-linetk.TkVersion',
                   'style.scale circle-rev',
                   'style.scrollbar-grip none',
                   'scrollbar.has.arrows false')
-    root.tk.call('package', 'require',theme)       
-  ### reconfigure menubar
-  style.theme_use(theme)
-  cfg.tkcols['activebackground'] = root.tk.call( 
-         '::ttk::style','lookup','TEntry','-selectbackground','focus')
-  cfg.tkcols['bg'] = root.tk.call( 
-         '::ttk::style','lookup','TButton','-background')   
-  cfg.tkcols['fg'] = root.tk.call( 
-         '::ttk::style','lookup','TButton','-foreground')
-  cfg.tkcols['activeforeground'] = root.tk.call( 
-         '::ttk::style','lookup','TButton','-foreground')
+      root.tk.call('package', 'require',theme)
 
-  dbg.dprint(2,theme,cfg.tkcols)
-  if 'menubar' in cfg.widgets:
-    newdict = cfg.widgets.menubar
-    for menu in newdict:
-      dbg.dprint(4,menu,newdict[menu])
-      newdict[menu].configure(**cfg.tkcols) 
-  if 'contentmenu' in cfg.widgets:
-    newdict = cfg.widgets.contentmenu
-    for menu in newdict:
-      dbg.dprint(4,menu,newdict[menu])
-      newdict[menu].configure(**cfg.tkcols) 
+  style.theme_use(theme)
+  ### get colors for menubar
+  tkcols = {}
+  tkcols['activebackground'] = root.tk.call( 
+         '::ttk::style','lookup','TEntry','-selectbackground','focus')
+  tkcols['bg']               = root.tk.call( 
+         '::ttk::style','lookup','TButton','-background')   
+  tkcols['fg']               = root.tk.call( 
+         '::ttk::style','lookup','TButton','-foreground')
+  tkcols['activeforeground'] = root.tk.call( 
+         '::ttk::style','lookup','TButton','-foreground')
+  ### reconfigure menubar
+  if pydevprog:
+    cfg.tkcols = tkcols
+    dbg.dprint(2,"Selected Theme:",theme,", Colors:",cfg.tkcols)
+    if 'menubar' in cfg.widgets:
+      newdict = cfg.widgets.menubar
+      for menu in newdict:
+        dbg.dprint(8,"ColorConfig:",menu,newdict[menu])
+        newdict[menu].configure(**tkcols) 
+    if 'contentmenu' in cfg.widgets:
+      newdict = cfg.widgets.contentmenu
+      for menu in newdict:
+        dbg.dprint(8,"ColorConfig:",menu,newdict[menu])
+        newdict[menu].configure(**tkcols) 
+    dbg.leavesub()    
+  
   return style.theme_use()      
           
