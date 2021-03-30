@@ -14,6 +14,7 @@ fgg      = Style.BRIGHT + Fore.GREEN
 fgy      = Style.BRIGHT + Fore.YELLOW
 fgr      = Style.BRIGHT + Fore.RED
 fgc      = Style.BRIGHT + Fore.CYAN
+fgb      = Style.BRIGHT
 etok1    = Style.BRIGHT + "-> ENTER" + Style.RESET_ALL
 etok2    = Style.BRIGHT + "FROM" + Style.RESET_ALL
 ltok1    = Style.BRIGHT + "<- LEAVE" + Style.RESET_ALL
