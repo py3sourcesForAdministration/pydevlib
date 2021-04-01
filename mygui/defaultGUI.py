@@ -58,38 +58,36 @@ def themes_wanted():
     return False
 
 ##### ------------------------------------------------------------------------
-class MenubBar(ttk.Frame):
+class LR_Panel(ttk.Frame):
   def __init__(self,master=None, **kw):
     self.myname = type(self).__name__
-    dbg.dprint(4,self.myname, "is pydevprog") 
-    cfg.widgets[self.myname] = self
+    if pydevprog:
+      dbg.entersub()
+      dbg.dprint(1,'->',self.myname)
+      dbg.dprint(4,self.myname, "is pydevprog") 
+      cfg.widgets['class'][self.myname] = self
     super().__init__(master, **kw)
-    self.File = ttk.Menubutton(self)
-    dropF = tk.Menu(self.File,tearoff=0)
-    dropF.add_command(label='Quit', command=self.quit())
-    self.File['menu'] = dropF
-    self.File.configure(state='normal', takefocus=False, text='File', width='4')
-    self.File.grid(column='0', row='0', sticky='w')
-    self.Edit = ttk.Menubutton(self)
-    self.Edit.configure(compound='bottom', cursor='arrow', takefocus=False, text='Edit')
-    self.Edit.configure(width='4')
-    self.Edit.grid(column='1', row='0', sticky='w')
-    self.Help = ttk.Menubutton(self)
-    self.Help.configure(text='Help', width='4')
-    self.Help.grid(column='10', row='0', sticky='e')
-    self.frame2_2 = ttk.Frame(self)
-    self.frame2_2.configure(height='20', width='4')
-    self.frame2_2.grid(column='3', columnspan='6', row='0', sticky='ew')
-    self.frame2_2.columnconfigure('3', weight='1')
-  
-#  def toc_menu(self, text):
-#        "Create table of contents as drop-down menu."
-#        toc = Menubutton(self, text='TOC')
-#        drop = Menu(toc, tearoff=False)
-#        for lbl, dex in text.parser.toc:
-#            drop.add_command(label=lbl, command=lambda dex=dex:text.yview(dex))
-#        toc['menu'] = drop
-#        return toc 
+    self.pane = ttk.Panedwindow(master, orient='horizontal')
+    self.L = ttk.Frame(self.pane)
+    self.L.grid(     column=0, row=0,    sticky='nsew')
+    self.L.rowconfigure(    0, weight=1, minsize=50)
+    self.L.columnconfigure( 0, weight=1, minsize=50)
+    self.R = ttk.Frame(self.pane)
+    self.R.grid(     column=0, row=0,    sticky='nsew')
+    self.L.rowconfigure(    0, weight=1, minsize=100)
+    self.L.columnconfigure( 0, weight=1, minsize=50)
+    self.pane.add(self.L,weight=1)
+    self.pane.add(self.R,weight=3)
+    self.pane.grid(column=0, row=0, sticky='nsew') 
+    if pydevprog:
+      cfg.widgets['L'] = self.L
+      cfg.widgets['R'] = self.R
+      dbg.dprint(1,'<-',self.myname)
+      dbg.leavesub()
+      #      cfg.widgets['content']['w'] = self
+    #return self.L,self.R
+  def get_LR(self):
+    return self.L,self.R 
 ##### ------------------------------------------------------------------------
 
 ##### ------------------------------------------------------------------------
@@ -272,7 +270,40 @@ class ThemeSelect(ttk.Frame):
     mb.grid(row=2, column=0, pady=6, columnspan=3, sticky="w")
     self.columnconfigure(1, weight=1)
 
-
+ 
+###### ------------------------------------------------------------------------
+#class MenubBar(ttk.Frame):
+#  def __init__(self,master=None, **kw):
+#    self.myname = type(self).__name__
+#    dbg.dprint(4,self.myname, "is pydevprog") 
+#    cfg.widgets[self.myname] = self
+#    super().__init__(master, **kw)
+#    self.File = ttk.Menubutton(self)
+#    dropF = tk.Menu(self.File,tearoff=0)
+#    dropF.add_command(label='Quit', command=self.quit())
+#    self.File['menu'] = dropF
+#    self.File.configure(state='normal', takefocus=False, text='File', width='4')
+#    self.File.grid(column='0', row='0', sticky='w')
+#    self.Edit = ttk.Menubutton(self)
+#    self.Edit.configure(compound='bottom', cursor='arrow', takefocus=False, text='Edit')
+#    self.Edit.configure(width='4')
+#    self.Edit.grid(column='1', row='0', sticky='w')
+#    self.Help = ttk.Menubutton(self)
+#    self.Help.configure(text='Help', width='4')
+#    self.Help.grid(column='10', row='0', sticky='e')
+#    self.frame2_2 = ttk.Frame(self)
+#    self.frame2_2.configure(height='20', width='4')
+#    self.frame2_2.grid(column='3', columnspan='6', row='0', sticky='ew')
+#    self.frame2_2.columnconfigure('3', weight='1')
+#  
+#  def toc_menu(self, text):
+#        "Create table of contents as drop-down menu."
+#        toc = Menubutton(self, text='TOC')
+#        drop = Menu(toc, tearoff=False)
+#        for lbl, dex in text.parser.toc:
+#            drop.add_command(label=lbl, command=lambda dex=dex:text.yview(dex))
+#        toc['menu'] = drop
+#        return toc 
 ##### ------------------------------------------------------------------------
 #def load_theme(root,theme='default'):  
 #  style = ttk.Style(root)
