@@ -1,4 +1,4 @@
-# pylibap
+# pydevlib
 create new python programs sharing the same structure, the same debugging, the same logging
 
 Usually working with systems in different environments it is helpful to use the same structure for all sysadmin programs. This repository holds 
@@ -11,7 +11,7 @@ So the first thing you should do after cloning this project is to create a link 
 
 Terms of use/License:
 
-    pylibap - Library and Helper to create new python programs with common structure
+    pydevlib - Library and Helper to create new python programs with common structure
 
     Copyright © 2020 Armin Poschmann
 
